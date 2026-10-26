@@ -1,5 +1,5 @@
 {
-  "updated": "26.10.2026 13:38:53",
+  "updated": "26.10.2026 14:34:12",
   "productionUrl": "https://kale-kusatmasi.vercel.app",
   "rounds": [
     {
@@ -11,6 +11,12 @@
       "round": 2,
       "score": 80,
       "date": "26.10.2026 13:38:53"
+    },
+    {
+      "round": 3,
+      "score": 80,
+      "date": "26.10.2026 14:34:12",
+      "note": "İki onaylı başlangıç/sonuç aşamaları, tur geçmişi ve kaynak dengesi canlıda doğrulandı."
     }
   ],
   "localChecks": [
@@ -24,7 +30,8 @@
     "Kullanıcı isteğiyle skor tablosu sıfırlandı. Son testten kalan 2 skor ve 15 kontrollü test odası temizlendi.",
     "flow.spec.ts yerel gerçek Supabase: 1 passed (1.5m); başlangıç ve sonuç beklemesi 16 saniye gözlendi.",
     "Canlı flow.spec.ts: 1 passed (1.0m); iki ayrı başlangıç/devam onayı ve haritaya bitişik hazır satırı doğrulandı. Skor oluşturulmadı.",
-    "journal.spec.ts yerel gerçek Supabase: 1 passed (46.3s); sınırlı gelir ve iki turun geçmişi doğrulandı."
+    "journal.spec.ts yerel gerçek Supabase: 1 passed (46.3s); sınırlı gelir ve iki turun geçmişi doğrulandı.",
+    "Canlı journal.spec.ts: 1 passed (26.8s); başlangıç 8/5, kale 1/1, orman +2, iki tur geçmişi ve sonuçta yenileme doğrulandı. Skor: 0; test odası otomatik temizlendi."
   ],
   "checks": {
     "E1": {
@@ -49,19 +56,20 @@
       "points": 6,
       "proof": "Seçilen emir yerel listede anında görüldü; kaynak/savaş sunucu çözümüyle değişti. Asker hareketi, bölge tarafları, hazır durumları ve Web Audio oscillator üretimi doğrulandı.",
       "file": "clarity.json",
-      "extra": "flow.json"
+      "extra": "journal.json"
     },
     "E5": {
       "points": 5,
       "proof": "Bağlam offline/online yapıldı; uyarı ve yeniden bağlanma doğrulandı. Yenilemede aynı oyuncu odaya döndü. Geçersiz oda kodu anlaşılır hata verdi.",
       "file": "integration.json",
-      "extra": "clarity.json"
+      "extra": "journal.json"
     },
     "E6": {
       "points": 6,
       "proof": "375 px: documentElement.scrollWidth ≤ 375. Bölge hedefleri en az 44×44 px; Tab odağı doğrulandı. Mobil görüntü incelendi, görünür odak ve okunaklı taraf etiketleri var.",
       "file": "clarity.json",
-      "image": "clear-mobile-map.png"
+      "image": "journal-mobile.png",
+      "extra": "journal.json"
     },
     "L1": {
       "points": 6,
@@ -111,7 +119,5 @@
       "file": "http.txt"
     }
   },
-  "blockers": [
-    "Sol savaş akışı ve azaltılan gelirler gerçek veritabanıyla yerelde geçti; son canlı görünüm kontrolü bekleniyor."
-  ]
+  "blockers": []
 }
