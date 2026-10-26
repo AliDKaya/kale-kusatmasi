@@ -2,7 +2,7 @@ import 'server-only';
 import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js';
 import { createHash, randomInt } from 'node:crypto';
-import { Game, Order, Side, finish, initialGame, resolveTurn, score, validateOrders } from './game';
+import { Game, Order, Side, finish, initialGame, resolveTurn, score, validateOrders, beginRound, finishByLimit } from './game';
 import type { Action } from './schema';
 
 type DB = ReturnType<typeof postgres>;
@@ -55,7 +55,7 @@ export async function joinRoom(user: string, code: string, nickname: string) {
     await guardMutation(tx,user);
     if (members.length >= 2 || r.state) throw new ApiError('Bu oda dolu. Tam olarak iki oyuncu katılabilir.',409);
     await tx`insert into public.room_players (room_id,player_id,side,nickname) values (${r.id},${user},1,${nickname})`;
-    await tx`update public.rooms set state=${tx.json(initialGame())},version=version+1 where id=${r.id}`;
+    await tx`update public.rooms set state=${tx.json(initialGame(Date.now(),true))},version=version+1 where id=${r.id}`;
     return { code };
   });
 }
@@ -77,48 +77,55 @@ export async function roomState(user: string, code: string, action?: Action) {
     const me = members.find(m => m.player_id === user);
     if (!me) throw new ApiError('Bu odaya erişim yetkin yok.',403);
     let changed = false;
-    if (action) {
-      const fingerprint = createHash('sha256').update(JSON.stringify({code,...action})).digest('hex');
-      const [operation] = await tx`select fingerprint from public.operations where player_id=${user} and operation_id=${action.operationId}`;
-      if (operation) {
-        if (operation.fingerprint !== fingerprint) throw new ApiError('İşlem kimliği farklı bir istek için kullanılmış.',409);
-        return snapshot(tx,r,members,me);
-      }
-      if (!r.state) throw new ApiError('İkinci oyuncu bekleniyor.',409);
-      if (r.state.phase === 'finished') {
-        if (action.action === 'resolve') return snapshot(tx,r,members,me);
-        throw new ApiError('Maç zaten tamamlandı.',409);
-      }
-      if (action.turn !== r.state.turn) {
-        if (action.action === 'resolve') return snapshot(tx,r,members,me);
-        throw new ApiError('Tur değişti. Güncel durumu alıp emrini yeniden seç.',409);
-      }
-      if (action.action === 'orders') {
-        if (Date.now() >= new Date(r.state.deadline).getTime()) throw new ApiError('Tur süresi doldu; sonuç bekleniyor.',409);
-        await guardMutation(tx,user);
-        const [old] = await tx`select ready from public.orders where room_id=${r.id} and player_id=${user} and turn=${r.state.turn}`;
-        if (old?.ready) throw new ApiError('Hazır olduğun için bu turun emirleri kilitlendi.',409);
-        try { validateOrders(r.state,me.side,action.orders); }
-        catch(e) { throw new ApiError(e instanceof Error ? e.message : 'Geçersiz emir.'); }
-        await tx`insert into public.orders (room_id,player_id,turn,payload,ready) values (${r.id},${user},${r.state.turn},${tx.json(action.orders)},${action.ready}) on conflict (room_id,player_id,turn) do update set payload=excluded.payload,ready=excluded.ready`;
-        changed = true;
-      } else if (action.action === 'surrender') { await guardMutation(tx,user); finish(r.state,me.side === 0 ? 1 : 0,'surrender'); r.state.log = [`${me.nickname} teslim oldu.`]; changed = true; }
-      await tx`insert into public.operations (player_id,operation_id,room_id,fingerprint) values (${user},${action.operationId},${r.id},${fingerprint})`;
-      if (r.state.phase === 'playing') {
-        const accepted = await tx`select player_id,payload,ready from public.orders where room_id=${r.id} and turn=${r.state.turn}`;
-        const bothReady = members.length === 2 && members.every(m => accepted.some(o => o.player_id === m.player_id && o.ready));
-        if (bothReady || Date.now() >= new Date(r.state.deadline).getTime()) {
-          const orders = members.map(m => accepted.find(o => o.player_id === m.player_id)?.payload ?? []) as [Order[],Order[]];
-          r.state = resolveTurn(r.state,orders);
-          r.state.lastTimedOut = members.filter(m=>!accepted.some(o=>o.player_id===m.player_id&&o.ready)).map(m=>m.side);
-          changed = true;
+    let fingerprint = '';
+    if(action){
+      fingerprint=createHash('sha256').update(JSON.stringify({code,...action})).digest('hex');
+      const [operation]=await tx`select fingerprint from public.operations where player_id=${user} and operation_id=${action.operationId}`;
+      if(operation){if(operation.fingerprint!==fingerprint)throw new ApiError('İşlem kimliği farklı bir istek için kullanılmış.',409);return snapshot(tx,r,members,me);}
+    }
+    // Existing matches from the previous release receive a total clock once, without restarting their turn.
+    if(r.state?.phase==='playing'&&!r.state.matchDeadline){r.state.matchDeadline=new Date(Date.now()+180_000).toISOString();changed=true;}
+    if(r.state?.phase!=='finished'&&r.state?.matchDeadline&&Date.now()>=new Date(r.state.matchDeadline).getTime()){
+      r.state=finishByLimit(r.state);changed=true;
+    }
+    if(action){
+      if(!r.state)throw new ApiError('İkinci oyuncu bekleniyor.',409);
+      if(r.state.phase==='finished'&&!changed){if(action.action==='resolve')return snapshot(tx,r,members,me);throw new ApiError('Maç zaten tamamlandı.',409);}
+      if(r.state.phase!=='finished'){
+        if(action.turn!==r.state.turn){if(action.action==='resolve')return snapshot(tx,r,members,me);throw new ApiError('Tur değişti. Güncel durumu alıp yeniden dene.',409);}
+        if(action.action==='continue'){
+          if(r.state.phase!=='waiting'&&r.state.phase!=='review')throw new ApiError('Tur zaten başladı.',409);
+          if(r.state.phase==='review'&&r.state.reviewUntil&&Date.now()<new Date(r.state.reviewUntil).getTime())throw new ApiError('Sonuç animasyonunu incelemek için kısa bir an bekle.',409);
+          await guardMutation(tx,user);r.state.transitionReady??=[false,false];r.state.transitionReady[me.side]=true;changed=true;
+          if(r.state.transitionReady.every(Boolean))r.state=beginRound(r.state);
+        }else if(action.action==='orders'){
+          if(r.state.phase!=='playing')throw new ApiError('Önce iki oyuncu da tura hazır olmalı.',409);
+          if(Date.now()>=new Date(r.state.deadline).getTime())throw new ApiError('Tur süresi doldu; sonuç bekleniyor.',409);
+          await guardMutation(tx,user);
+          const [old]=await tx`select ready from public.orders where room_id=${r.id} and player_id=${user} and turn=${r.state.turn}`;
+          if(old?.ready)throw new ApiError('Emirlerin kilitlendi. Rakibin hazır olması bekleniyor.',409);
+          try{validateOrders(r.state,me.side,action.orders);}catch(e){throw new ApiError(e instanceof Error?e.message:'Geçersiz emir.');}
+          await tx`insert into public.orders (room_id,player_id,turn,payload,ready) values (${r.id},${user},${r.state.turn},${tx.json(action.orders)},${action.ready}) on conflict (room_id,player_id,turn) do update set payload=excluded.payload,ready=excluded.ready`;
+          changed=true;
+        }else if(action.action==='surrender'){
+          if(r.state.phase==='waiting')throw new ApiError('Maç henüz başlamadı.',409);
+          await guardMutation(tx,user);finish(r.state,me.side===0?1:0,'surrender');r.state.log=[`${me.nickname} teslim oldu.`];changed=true;
+        }
+        await tx`insert into public.operations (player_id,operation_id,room_id,fingerprint) values (${user},${action.operationId},${r.id},${fingerprint})`;
+        if(r.state.phase==='playing'){
+          const accepted=await tx`select player_id,payload,ready from public.orders where room_id=${r.id} and turn=${r.state.turn}`;
+          const bothReady=members.length===2&&members.every(m=>accepted.some(o=>o.player_id===m.player_id&&o.ready));
+          if(bothReady||Date.now()>=new Date(r.state.deadline).getTime()){
+            const orders=members.map(m=>accepted.find(o=>o.player_id===m.player_id)?.payload??[]) as [Order[],Order[]];
+            r.state=resolveTurn(r.state,orders);r.state.lastTimedOut=members.filter(m=>!accepted.some(o=>o.player_id===m.player_id&&o.ready)).map(m=>m.side);changed=true;
+          }
         }
       }
-      if (changed) {
-        if (r.state.phase === 'finished') await saveScores(tx,r,members);
-        const [updated] = await tx`update public.rooms set state=${tx.json(r.state)},version=version+1,finished_at=${r.state.phase === 'finished' ? new Date() : null} where id=${r.id} returning version`;
-        r.version = updated.version;
-      }
+    }
+    if(changed&&r.state){
+      if(r.state.phase==='finished')await saveScores(tx,r,members);
+      const [updated]=await tx`update public.rooms set state=${tx.json(r.state)},version=version+1,finished_at=${r.state.phase==='finished'?new Date():null} where id=${r.id} returning version`;
+      r.version=updated.version;
     }
     return snapshot(tx,r,members,me);
   });
@@ -126,8 +133,8 @@ export async function roomState(user: string, code: string, action?: Action) {
 async function snapshot(tx: DB, room: Room, members: Member[], me: Member) {
   const orders = room.state ? await tx`select player_id,payload,ready from public.orders where room_id=${room.id} and turn=${room.state.turn}` : [];
   return { id: room.id, code: room.code, version: room.version, game: room.state, side: me.side, serverTime: new Date().toISOString(),
-    players: members.map(m => ({ id: m.player_id, nickname: m.nickname, side: m.side, ready: !!orders.find(o => o.player_id === m.player_id)?.ready })),
-    ownOrders: orders.find(o => o.player_id === me.player_id)?.payload ?? [] };
+    players: members.map(m => ({ id: m.player_id, nickname: m.nickname, side: m.side, ready: room.state?.phase==='waiting'||room.state?.phase==='review'?!!room.state.transitionReady?.[m.side]:!!orders.find(o => o.player_id === m.player_id)?.ready })),
+    ownOrders: room.state?.phase==='playing'?(orders.find(o => o.player_id === me.player_id)?.payload ?? []):[] };
 }
 export async function leaderboard(today: boolean, user?: string) {
   const rows = await db()`with ranked as (

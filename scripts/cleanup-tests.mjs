@@ -1,6 +1,6 @@
 import nextEnv from '@next/env';import postgres from 'postgres';
 nextEnv.loadEnvConfig(process.cwd());const sql=postgres(process.env.DATABASE_URL,{ssl:'require',prepare:false,max:1});
-const pattern='^Test(Bati|Dogu|Diger|SkorA|SkorB|SkorC|UiA|UiB|FinalA|FinalB)[0-9]{6}$';
+const pattern='^Test(Bati|Dogu|Diger|SkorA|SkorB|SkorC|UiA|UiB|FinalA|FinalB|FlowA|FlowB|JournalA|JournalB)[0-9]{6}$';
 try{
  const result=await sql.begin(async tx=>{
   const rooms=await tx`select r.id from rooms r join room_players p on p.room_id=r.id where r.created_at>=now()-interval '6 hours' group by r.id having bool_and(p.nickname ~ ${pattern})`;

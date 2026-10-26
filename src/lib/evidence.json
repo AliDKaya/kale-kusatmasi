@@ -14,25 +14,30 @@
     }
   ],
   "localChecks": [
-    "npm test: 18 passed, 0 failed.",
+    "npm test: 22 passed, 0 failed.",
     "npx tsc --noEmit: exit 0.",
     "npm run lint: 0 errors; mevcut JPEG referanslarının img kullanımı için Next.js öneri uyarıları.",
     "Canlı multiplayer.spec.ts: 1 passed (57.3s).",
     "Canlı scoreboard.spec.ts: 1 passed (1.2m).",
     "Canlı clarity.spec.ts: 1 passed (23.0s).",
     "Canlı result.spec.ts: 1 passed (35.2s); 220/420 puan dökümü API ile aynı.",
-    "Kullanıcı isteğiyle skor tablosu sıfırlandı. Son testten kalan 2 skor ve 15 kontrollü test odası temizlendi."
+    "Kullanıcı isteğiyle skor tablosu sıfırlandı. Son testten kalan 2 skor ve 15 kontrollü test odası temizlendi.",
+    "flow.spec.ts yerel gerçek Supabase: 1 passed (1.5m); başlangıç ve sonuç beklemesi 16 saniye gözlendi.",
+    "Canlı flow.spec.ts: 1 passed (1.0m); iki ayrı başlangıç/devam onayı ve haritaya bitişik hazır satırı doğrulandı. Skor oluşturulmadı.",
+    "journal.spec.ts yerel gerçek Supabase: 1 passed (46.3s); sınırlı gelir ve iki turun geçmişi doğrulandı."
   ],
   "checks": {
     "E1": {
       "points": 5,
       "proof": "Canlı Playwright: takma ad → oda aç/katıl → oyun. Clipboard okuması oda koduyla aynı. Üç adımlı rehber görüldü.",
-      "file": "clarity.json"
+      "file": "clarity.json",
+      "extra": "flow.json"
     },
     "E2": {
       "points": 8,
       "proof": "İki bağımsız bağlamda sunucunun tur sonucu 703 ms içinde eşlendi; sayfa yenilenmedi. Rakip emir payload’u gizli kaldı.",
-      "file": "integration.json"
+      "file": "integration.json",
+      "extra": "flow.json"
     },
     "E3": {
       "points": 5,
@@ -43,7 +48,8 @@
     "E4": {
       "points": 6,
       "proof": "Seçilen emir yerel listede anında görüldü; kaynak/savaş sunucu çözümüyle değişti. Asker hareketi, bölge tarafları, hazır durumları ve Web Audio oscillator üretimi doğrulandı.",
-      "file": "clarity.json"
+      "file": "clarity.json",
+      "extra": "flow.json"
     },
     "E5": {
       "points": 5,
@@ -105,5 +111,7 @@
       "file": "http.txt"
     }
   },
-  "blockers": []
+  "blockers": [
+    "Sol savaş akışı ve azaltılan gelirler gerçek veritabanıyla yerelde geçti; son canlı görünüm kontrolü bekleniyor."
+  ]
 }

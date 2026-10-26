@@ -1,3 +1,4 @@
+import {advanceIfNeeded} from './helpers';
 import { test,expect,type Page } from '@playwright/test';
 import { readFileSync,writeFileSync,mkdirSync } from 'node:fs';
 import { loadEnvConfig } from '@next/env';
@@ -18,7 +19,7 @@ test('skor: canlı bildirim, 10 dışı sıra, eşitlik, tarih filtresi ve yetki
   let code=p.url().split('/').pop()!;rooms.push(code);
   await q.goto(baseURL!);await q.getByLabel('TAKMA ADIN').fill(nB);await q.getByRole('button',{name:'Koda katıl',exact:true}).click();await q.getByLabel('ODA KODU').fill(code);await q.getByRole('button',{name:'Meydana katıl'}).click();await expect(q).toHaveURL(/\/room\/[A-Z2-9]{6}$/,{timeout:15000});
   await expect.poll(async()=>((await call(p,`/api/rooms/${code}`)).data).players.length,{timeout:15000}).toBe(2);
-  const state=(await call(p,`/api/rooms/${code}`)).data;users.push(...state.players.map((m:{id:string})=>m.id));
+  await advanceIfNeeded(p,q,code);const state=(await call(p,`/api/rooms/${code}`)).data;users.push(...state.players.map((m:{id:string})=>m.id));
   await r.goto(`${baseURL}/leaderboard`);await expect(r.locator('.live-label')).toContainText('CANLI GÜNCELLENİYOR',{timeout:15000});
   const started=Date.now();expect((await call(p,`/api/rooms/${code}`,{action:'surrender',turn:1,operationId:crypto.randomUUID()})).status).toBe(200);
   await expect(r.locator('.score-table')).toContainText(nB,{timeout:10000});checks.liveScoreLatencyMs=Date.now()-started;
@@ -26,16 +27,16 @@ test('skor: canlı bildirim, 10 dışı sıra, eşitlik, tarih filtresi ve yetki
   for(let i=0;i<5;i++){
    await new Promise(res=>setTimeout(res,5200));
    const created=await call(p,'/api/rooms',{nickname:nA});expect(created.status).toBe(200);code=created.data.code;rooms.push(code);
-   expect((await call(q,'/api/rooms',{nickname:nB,code})).status).toBe(200);await new Promise(res=>setTimeout(res,1100));
+   expect((await call(q,'/api/rooms',{nickname:nB,code})).status).toBe(200);await advanceIfNeeded(p,q,code);await new Promise(res=>setTimeout(res,1100));
    expect((await call(p,`/api/rooms/${code}`,{action:'surrender',turn:1,operationId:crypto.randomUUID()})).status).toBe(200);
   }
   await new Promise(res=>setTimeout(res,1100));
   const created=await call(r,'/api/rooms',{nickname:nC});expect(created.status).toBe(200);code=created.data.code;rooms.push(code);
-  expect((await call(q,'/api/rooms',{nickname:nB,code})).status).toBe(200);await new Promise(res=>setTimeout(res,1100));
+  expect((await call(q,'/api/rooms',{nickname:nB,code})).status).toBe(200);await advanceIfNeeded(r,q,code);await new Promise(res=>setTimeout(res,1100));
   const final=(await call(r,`/api/rooms/${code}`)).data;users.push(...final.players.map((m:{id:string})=>m.id).filter((id:string)=>!users.includes(id)));
   const end={action:'surrender',turn:1,operationId:crypto.randomUUID()};
   // Opponent was scored <5 seconds ago. Whole result must roll back until the cooldown expires.
-  const early=await call(r,`/api/rooms/${code}`,end);expect(early.status).toBe(429);checks.scoreCooldown=true;
+  await sql`update players set last_score_at=now() where id=${users[1]}`;const early=await call(r,`/api/rooms/${code}`,end);expect(early.status).toBe(429);checks.scoreCooldown=true;
   await new Promise(res=>setTimeout(res,5200));expect((await call(r,`/api/rooms/${code}`,end)).status).toBe(200);
   expect((await call(r,`/api/rooms/${code}`,end)).status).toBe(200);
   expect((await call(r,`/api/rooms/${code}`,{action:'orders',turn:1,operationId:crypto.randomUUID(),orders:[],ready:true})).status).toBe(409);

@@ -1,3 +1,4 @@
+import {advanceIfNeeded} from './helpers';
 import {test,expect,type Page} from '@playwright/test';
 import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
 async function call(page:Page,url:string,body?:unknown){const token=await page.evaluate(()=>{const key=Object.keys(localStorage).find(k=>k.endsWith('-auth-token'));return key?JSON.parse(localStorage.getItem(key)!).access_token:null;});const response=await page.request.fetch(url,{method:body?'POST':'GET',headers:{Authorization:`Bearer ${token}`},...(body?{data:body}:{})});return{status:response.status(),data:await response.json()};}
@@ -6,7 +7,7 @@ test('sonuç özeti harita üstünde ve puan dökümü sunucu skoruyla aynı',as
  try{
   await p.goto(baseURL!);await p.getByLabel('TAKMA ADIN').fill(nameA);await p.getByRole('button',{name:'Oda oluştur'}).focus();await p.keyboard.press('Enter');await expect(p).toHaveURL(/\/room\/[A-Z2-9]{6}$/,{timeout:15000});code=p.url().split('/').pop()!;
   await q.goto(baseURL!);await q.getByLabel('TAKMA ADIN').fill(nameB);await q.getByRole('button',{name:'Koda katıl',exact:true}).click();await q.getByLabel('ODA KODU').fill(code);await q.getByRole('button',{name:'Meydana katıl'}).click();await expect(q).toHaveURL(/\/room\/[A-Z2-9]{6}$/,{timeout:15000});
-  await expect.poll(async()=>((await call(p,`/api/rooms/${code}`)).data.players.length),{timeout:15000}).toBe(2);const view=(await call(p,`/api/rooms/${code}`)).data;users.push(...view.players.map((m:{id:string})=>m.id));
+  await expect.poll(async()=>((await call(p,`/api/rooms/${code}`)).data.players.length),{timeout:15000}).toBe(2);const view=(await call(p,`/api/rooms/${code}`)).data;users.push(...view.players.map((m:{id:string})=>m.id));await advanceIfNeeded(p,q,code);
   expect((await call(p,`/api/rooms/${code}`,{action:'surrender',turn:view.game.turn,operationId:crypto.randomUUID()})).status).toBe(200);
   await expect(p.locator('.match-summary')).toBeVisible({timeout:10000});await expect(p.locator('.match-summary h2')).toHaveText('Rakibin kazandı.');await expect(q.locator('.match-summary h2')).toHaveText('Zafer senin!',{timeout:10000});
   await expect(p.locator('.your-score .match-total strong')).toHaveText('220');await expect(q.locator('.your-score .match-total strong')).toHaveText('420');

@@ -17,16 +17,19 @@ export const UNITS: Record<Unit, { name: string; gold: number; wood: number; pow
   kusatma: { name: 'Kuşatma', gold: 6, wood: 4, power: 2, damage: 6 },
 };
 export const UNIT_KEYS = Object.keys(UNITS) as Unit[];
+export const ECONOMY={startGold:8,startWood:5,baseGold:1,baseWood:1,mineGold:3,forestWood:2} as const;
 export const EDGES: [RegionId, RegionId][] = [['A','B'],['A','C'],['B','D'],['C','D'],['D','E'],['D','F'],['E','G'],['F','G'],['B','E'],['C','F']];
 export type Order = { type: 'recruit'; at: RegionId; unit: Unit } | { type: 'move'; from: RegionId; to: RegionId; army: Army } | { type: 'defend'; at: RegionId };
 export type Territory = { owner: Side | null; army: Army };
 export type Game = {
-  turn: number; deadline: string; phase: 'playing' | 'finished'; winner: Side | 'draw' | null;
+  turn: number; deadline: string; phase: 'waiting' | 'playing' | 'review' | 'finished'; winner: Side | 'draw' | null;
   players: [{ gold: number; wood: number; hp: number }, { gold: number; wood: number; hp: number }];
   regions: Record<RegionId, Territory>; log: string[];
   lastMoves?: {side:Side;from:RegionId;to:RegionId;army:Army}[];
   lastTimedOut?: Side[];
-  finishReason?: 'castle' | 'elimination' | 'turn-limit' | 'surrender';
+  finishReason?: 'castle' | 'elimination' | 'turn-limit' | 'match-time' | 'surrender';
+  matchDeadline?: string; reviewUntil?: string; transitionReady?: [boolean,boolean];
+  history?: {turn:number;lines:string[]}[];
 };
 export const emptyArmy = (): Army => ({ piyade: 0, okcu: 0, kusatma: 0 });
 export const count = (a: Army) => UNIT_KEYS.reduce((n, u) => n + a[u], 0);
@@ -36,13 +39,14 @@ const add = (a: Army, b: Army) => { for (const u of UNIT_KEYS) a[u] += b[u]; };
 const name = (id: RegionId) => REGIONS.find(r => r.id === id)!.name;
 const sideName = (s: Side) => s === 0 ? 'Batı' : 'Doğu';
 
-export function initialGame(now = Date.now()): Game {
+export function initialGame(now = Date.now(), waiting = false): Game {
   const regions = Object.fromEntries(REGIONS.map(r => [r.id, { owner: null, army: emptyArmy() }])) as Game['regions'];
   regions.A = { owner: 0, army: { piyade: 3, okcu: 1, kusatma: 0 } };
   regions.G = { owner: 1, army: { piyade: 3, okcu: 1, kusatma: 0 } };
-  return { turn: 1, deadline: new Date(now + 15_000).toISOString(), phase: 'playing', winner: null,
-    players: [{ gold: 12, wood: 8, hp: 20 }, { gold: 12, wood: 8, hp: 20 }], regions,
-    log: ['Sancaklar açıldı. İki emir seç, sonra hazır olduğunu bildir.'] };
+  return { turn: 1, deadline: new Date(now + 15_000).toISOString(), phase: waiting?'waiting':'playing', winner: null,
+    matchDeadline:waiting?undefined:new Date(now+180_000).toISOString(),transitionReady:[false,false],
+    players: [{ gold: ECONOMY.startGold, wood: ECONOMY.startWood, hp: 20 }, { gold: ECONOMY.startGold, wood: ECONOMY.startWood, hp: 20 }], regions,history:[],
+    log: [waiting?'İki sancak yerini aldı. İkiniz de Maça hazırım deyince süre başlar.':'Sancaklar açıldı. İki emir seç, sonra hazır olduğunu bildir.'] };
 }
 
 export function recruitCost(o: Extract<Order, {type:'recruit'}>) {
@@ -90,6 +94,18 @@ export function battle(a: Army, b: Army, bonusA = 0, bonusB = 0): { armies: [Arm
 }
 
 export function finish(g: Game, winner: Game['winner'], reason?:Game['finishReason']): Game { g.phase = 'finished'; g.winner = winner; if(reason)g.finishReason=reason; return g; }
+export function beginRound(original:Game,now=Date.now()):Game {
+  const g=structuredClone(original);
+  if(g.phase!=='waiting'&&g.phase!=='review')throw new Error('Bu aşamada yeni tur başlatılamaz.');
+  if(g.phase==='review'&&g.reviewUntil&&now<new Date(g.reviewUntil).getTime())throw new Error('Sonuç animasyonu tamamlanmalı.');
+  if(g.phase==='waiting')g.log=['1. tur başladı. İki emrini seçip Emirlerim hazır düğmesine bas.'];
+  g.matchDeadline??=new Date(now+180_000).toISOString();g.phase='playing';g.deadline=new Date(now+15_000).toISOString();g.transitionReady=[false,false];g.lastMoves=[];delete g.reviewUntil;return g;
+}
+export function finishByLimit(original:Game,reason:Game['finishReason']='match-time'):Game {
+  const g=structuredClone(original);const diff=g.players[0].hp-g.players[1].hp||REGIONS.filter(r=>g.regions[r.id].owner===0).length-REGIONS.filter(r=>g.regions[r.id].owner===1).length;
+  g.log.push(reason==='match-time'?'Toplam 3 dakikalık maç süresi doldu. Kale dayanıklılığı ve bölge sayısıyla sonuç belirlendi.':'10 tur tamamlandı.');
+  return finish(g,diff===0?'draw':diff>0?0:1,reason);
+}
 export function score(g: Game, side: Side): number {
   if (g.phase !== 'finished') throw new Error('Tamamlanmayan maçtan skor üretilemez.');
   return g.players[side].hp * 10 + REGIONS.filter(r => g.regions[r.id].owner === side).length * 20 + (g.winner === side ? 200 : g.winner === 'draw' ? 100 : 0);
@@ -97,6 +113,8 @@ export function score(g: Game, side: Side): number {
 
 export function resolveTurn(original: Game, orders: [Order[], Order[]], now = Date.now()): Game {
   const g: Game = structuredClone(original);
+  if(g.matchDeadline&&now>=new Date(g.matchDeadline).getTime())return finishByLimit(g);
+  const record=(result:Game)=>{result.history=[...(original.history??[]).filter(h=>h.turn!==original.turn),{turn:original.turn,lines:[...result.log]}].slice(-10);return result;};
   for (const side of [0,1] as Side[]) validateOrders(g, side, orders[side]);
   const log: string[] = [`${g.turn}. tur sonuçları`];
   const defenses: Set<RegionId>[] = [new Set(),new Set()];
@@ -168,18 +186,17 @@ export function resolveTurn(original: Game, orders: [Order[], Order[]], now = Da
   if(lost[0]||lost[1]) {
     const winner=lost[0]&&lost[1]?'draw':lost[0]?1:0;
     for(const side of [0,1] as Side[]) if(eliminated[side]) log.push(`${sideName(side)} sancağının hiçbir bölgesi ve birliği kalmadı; maç sona erdi.`);
-    return finish(g,winner,eliminated.some(Boolean)?'elimination':'castle');
+    return record(finish(g,winner,eliminated.some(Boolean)?'elimination':'castle'));
   }
   if (g.turn >= 10) {
-    const d = p0.hp - p1.hp || REGIONS.filter(r => g.regions[r.id].owner === 0).length - REGIONS.filter(r => g.regions[r.id].owner === 1).length;
-    return finish(g, d === 0 ? 'draw' : d > 0 ? 0 : 1,'turn-limit');
+    return record(finishByLimit(g,'turn-limit'));
   }
   for (const side of [0,1] as Side[]) {
-    let gold = 3, wood = 2;
-    for (const r of REGIONS) if (g.regions[r.id].owner === side) { if (r.kind === 'mine') gold += 4; if (r.kind === 'forest') wood += 3; }
+    let gold:number = ECONOMY.baseGold, wood:number = ECONOMY.baseWood;
+    for (const r of REGIONS) if (g.regions[r.id].owner === side) { if (r.kind === 'mine') gold += ECONOMY.mineGold; if (r.kind === 'forest') wood += ECONOMY.forestWood; }
     g.players[side].gold += gold; g.players[side].wood += wood;
     log.push(`${sideName(side)} geliri: ${gold} altın, ${wood} odun.`);
   }
-  g.turn++; g.deadline = new Date(now + 15_000).toISOString();
-  return g;
+  g.turn++;g.phase='review';g.reviewUntil=new Date(now+2500).toISOString();g.transitionReady=[false,false];g.deadline=new Date(now).toISOString();
+  return record(g);
 }

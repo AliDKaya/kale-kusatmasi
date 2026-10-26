@@ -1,0 +1,14 @@
+{
+  "baseURL": "https://kale-kusatmasi.vercel.app",
+  "date": "2026-10-26T11:14:59.083Z",
+  "checks": {
+    "noAutomaticStartAfter15s": true,
+    "firstReadyVisible": true,
+    "bothStartFirstRound": true,
+    "resultWaitsBeyond15s": true,
+    "singleContinueDoesNotStart": true,
+    "bothContinueStartNewRound": true,
+    "readyImmediatelyAboveMap": true,
+    "mobile375": true
+  }
+}

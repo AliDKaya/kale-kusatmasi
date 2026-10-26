@@ -1,3 +1,4 @@
+import {advanceIfNeeded} from './helpers';
 import { test, expect, type Page } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 type View={id:string;code:string;version:number;side:0|1;players:{id:string;nickname:string;ready:boolean}[];ownOrders:unknown[];game:{turn:number;phase:string;players:{gold:number;wood:number;hp:number}[];regions:Record<string,{army:{piyade:number}}>}};
@@ -20,17 +21,18 @@ test('gerçek iki bağlam: gizlilik, tur yarışı, Presence, yeniden bağlanma,
   const code=p.url().split('/').pop()!;rooms.push(code);
   await q.goto(baseURL!);await q.getByLabel('TAKMA ADIN').fill(nickB);await q.getByRole('button',{name:'Koda katıl',exact:true}).click();await q.getByLabel('ODA KODU').fill(code);await q.getByRole('button',{name:'Meydana katıl'}).click();await expect(q).toHaveURL(new RegExp(`/room/${code}$`));
   await expect(p.locator('.player-banner').filter({hasText:nickB})).toBeVisible({timeout:12000});await expect(q.locator('.player-banner').filter({hasText:nickA})).toBeVisible({timeout:12000});
-  await expect(p.locator('.player-banner').filter({hasText:nickB})).toContainText('Çevrimiçi',{timeout:12000});checks.presence=true;
+  await expect(p.locator('.player-banner').filter({hasText:nickB})).toContainText('Çevrimiçi',{timeout:12000});checks.presence=true;await advanceIfNeeded(p,q,code);
   let s=(await call(p,`/api/rooms/${code}`)).data as View;users.push(...s.players.map(x=>x.id));
   const turn=s.game.turn;const before=s.game.regions.A.army.piyade;
   await p.getByRole('button',{name:/^A: Batı Kalesi/}).click();await expect(p.locator('.order-list')).toContainText('Piyade');
   await expect.poll(async()=>((await call(p,`/api/rooms/${code}`)).data as View).ownOrders.length).toBe(1);
-  const enemy=(await call(q,`/api/rooms/${code}`)).data as View;expect(enemy.ownOrders).toEqual([]);expect(enemy.game.players[0].gold).toBe(12);checks.secretOrders=true;
-  await p.getByRole('button',{name:/Hazırım/}).click();await expect(q.locator('.player-banner').filter({hasText:nickA})).toContainText('Hazır ✓');
-  const start=Date.now();await q.getByRole('button',{name:/Hazırım/}).click();
+  const enemy=(await call(q,`/api/rooms/${code}`)).data as View;expect(enemy.ownOrders).toEqual([]);expect(enemy.game.players[0].gold).toBe(8);checks.secretOrders=true;
+  await p.getByRole('button',{name:/Emirlerim hazır/}).click();await expect(q.locator('.player-banner').filter({hasText:nickA})).toContainText('Hazır ✓');
+  const start=Date.now();await q.getByRole('button',{name:/Emirlerim hazır/}).click();
   await expect.poll(async()=>((await call(p,`/api/rooms/${code}`)).data as View).game.turn).toBe(turn+1);
   await expect(p.locator('.turn-block')).toContainText(`TUR ${turn+1}`);await expect(q.locator('.turn-block')).toContainText(`TUR ${turn+1}`);
   s=(await call(p,`/api/rooms/${code}`)).data as View;expect(s.game.regions.A.army.piyade).toBe(before+1);checks.syncLatencyMs=Date.now()-start;
+  await advanceIfNeeded(p,q,code);
   // Exact operation retry must apply once; old turn, invalid ownership and overspend must fail.
   await new Promise(res=>setTimeout(res,1100));
   const op={action:'orders',operationId:crypto.randomUUID(),turn:s.game.turn,orders:[{type:'defend',at:'A'}],ready:false};
@@ -50,7 +52,7 @@ test('gerçek iki bağlam: gizlilik, tur yarışı, Presence, yeniden bağlanma,
   const targets=await p.locator('.region').evaluateAll(elements=>elements.map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height})));expect(targets.every(t=>t.w>=44&&t.h>=44)).toBe(true);await p.screenshot({path:'tmp/evidence/mobile-battle.png',fullPage:true});checks.mobile375=true;
   // Expiry is controlled by active clients. Resolve requests race safely under the same room lock.
   while(true){
-   s=(await call(p,`/api/rooms/${code}`)).data as View;if(s.game.phase==='finished')break;
+   s=(await call(p,`/api/rooms/${code}`)).data as View;if(s.game.phase==='finished')break;if(s.game.phase==='review'){await advanceIfNeeded(p,q,code);continue;}
    await new Promise(res=>setTimeout(res,1150));
    await Promise.all([call(p,`/api/rooms/${code}`,{action:'orders',operationId:crypto.randomUUID(),turn:s.game.turn,orders:[],ready:true}),call(q,`/api/rooms/${code}`,{action:'orders',operationId:crypto.randomUUID(),turn:s.game.turn,orders:[],ready:true})]);
    const race=await Promise.all([call(p,`/api/rooms/${code}`,{action:'resolve',operationId:crypto.randomUUID(),turn:s.game.turn}),call(q,`/api/rooms/${code}`,{action:'resolve',operationId:crypto.randomUUID(),turn:s.game.turn})]);
