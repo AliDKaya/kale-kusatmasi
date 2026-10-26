@@ -22,7 +22,8 @@ export async function identity(request: Request): Promise<string> {
   if (error || !data.user) throw new ApiError('Oturum doğrulanamadı. Yeniden bağlanmayı dene.', 401);
   return data.user.id;
 }
-type Room = { id: string; code: string; state: Game | null; version: number };
+type Room = { id: string; code: string; state: Game | null; version: number; finished_at: string | null };
+const isClosed = (room: Room) => !!room.finished_at && (!room.state || room.state.phase !== 'finished' || !!room.state.closed);
 type Member = { player_id: string; nickname: string; side: Side };
 async function transaction<T>(callback: (tx: DB) => Promise<T>): Promise<T> {
   // Only the query callable is used; no connection methods are called inside a transaction.
@@ -48,8 +49,9 @@ export async function createRoom(user: string, nickname: string) {
 export async function joinRoom(user: string, code: string, nickname: string) {
   return transaction(async tx => {
     await tx`insert into public.players (id,nickname) values (${user},${nickname}) on conflict (id) do nothing`;
-    const [r] = await tx<Room[]>`select id,code,state,version from public.rooms where code=${code} for update`;
+    const [r] = await tx<Room[]>`select id,code,state,version,finished_at from public.rooms where code=${code} for update`;
     if (!r) throw new ApiError('Bu kodla bir oda bulunamadı.',404);
+    if (isClosed(r)) throw new ApiError('Bu oda sahibi tarafından kapatıldı. Yeni bir odaya katıl.',410);
     const members = await tx<Member[]>`select player_id,nickname,side from public.room_players where room_id=${r.id} order by side`;
     if (members.some(m => m.player_id === user)) return { code };
     await guardMutation(tx,user);
@@ -71,7 +73,7 @@ async function saveScores(tx: DB, room: Room, members: Member[]) {
 }
 export async function roomState(user: string, code: string, action?: Action) {
   return transaction(async tx => {
-    const [r] = await tx<Room[]>`select id,code,state,version from public.rooms where code=${code} for update`;
+    const [r] = await tx<Room[]>`select id,code,state,version,finished_at from public.rooms where code=${code} for update`;
     if (!r) throw new ApiError('Oda bulunamadı.',404);
     const members = await tx<Member[]>`select player_id,nickname,side from public.room_players where room_id=${r.id} order by side`;
     const me = members.find(m => m.player_id === user);
@@ -82,6 +84,24 @@ export async function roomState(user: string, code: string, action?: Action) {
       fingerprint=createHash('sha256').update(JSON.stringify({code,...action})).digest('hex');
       const [operation]=await tx`select fingerprint from public.operations where player_id=${user} and operation_id=${action.operationId}`;
       if(operation){if(operation.fingerprint!==fingerprint)throw new ApiError('İşlem kimliği farklı bir istek için kullanılmış.',409);return snapshot(tx,r,members,me);}
+    }
+    if (isClosed(r)) {
+      if (action && !(action.action === 'close' && me.side === 0)) throw new ApiError('Bu oda kapatıldı.',410);
+      return snapshot(tx,r,members,me);
+    }
+    if (action?.action === 'close') {
+      if (me.side !== 0) throw new ApiError('Odayı yalnızca açan oyuncu kapatabilir.',403);
+      await guardMutation(tx,user);
+      if (r.state && r.state.phase !== 'waiting' && r.state.phase !== 'finished') {
+        if (r.state.matchDeadline && Date.now() >= new Date(r.state.matchDeadline).getTime()) r.state = finishByLimit(r.state);
+        else { finish(r.state,1,'surrender'); r.state.log = [`${me.nickname} odayı kapatarak teslim oldu.`]; }
+        await saveScores(tx,r,members);
+      }
+      if (r.state) r.state.closed = true;
+      await tx`insert into public.operations (player_id,operation_id,room_id,fingerprint) values (${user},${action.operationId},${r.id},${fingerprint})`;
+      const [updated] = await tx`update public.rooms set state=${r.state ? tx.json(r.state) : null},finished_at=now(),version=version+1 where id=${r.id} returning version,finished_at`;
+      r.version=updated.version;r.finished_at=updated.finished_at;
+      return snapshot(tx,r,members,me);
     }
     // Existing matches from the previous release receive a total clock once, without restarting their turn.
     if(r.state?.phase==='playing'&&!r.state.matchDeadline){r.state.matchDeadline=new Date(Date.now()+180_000).toISOString();changed=true;}
@@ -132,7 +152,7 @@ export async function roomState(user: string, code: string, action?: Action) {
 }
 async function snapshot(tx: DB, room: Room, members: Member[], me: Member) {
   const orders = room.state ? await tx`select player_id,payload,ready from public.orders where room_id=${room.id} and turn=${room.state.turn}` : [];
-  return { id: room.id, code: room.code, version: room.version, game: room.state, side: me.side, serverTime: new Date().toISOString(),
+  return { id: room.id, code: room.code, version: room.version, closed: isClosed(room), game: isClosed(room) ? null : room.state, side: me.side, serverTime: new Date().toISOString(),
     players: members.map(m => ({ id: m.player_id, nickname: m.nickname, side: m.side, ready: room.state?.phase==='waiting'||room.state?.phase==='review'?!!room.state.transitionReady?.[m.side]:!!orders.find(o => o.player_id === m.player_id)?.ready })),
     ownOrders: room.state?.phase==='playing'?(orders.find(o => o.player_id === me.player_id)?.payload ?? []):[] };
 }

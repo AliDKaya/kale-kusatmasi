@@ -22,6 +22,7 @@ export const EDGES: [RegionId, RegionId][] = [['A','B'],['A','C'],['B','D'],['C'
 export type Order = { type: 'recruit'; at: RegionId; unit: Unit } | { type: 'move'; from: RegionId; to: RegionId; army: Army } | { type: 'defend'; at: RegionId };
 export type Territory = { owner: Side | null; army: Army };
 export type Game = {
+  closed?: boolean;
   turn: number; deadline: string; phase: 'waiting' | 'playing' | 'review' | 'finished'; winner: Side | 'draw' | null;
   players: [{ gold: number; wood: number; hp: number }, { gold: number; wood: number; hp: number }];
   regions: Record<RegionId, Territory>; log: string[];

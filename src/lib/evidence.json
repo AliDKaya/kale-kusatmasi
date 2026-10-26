@@ -31,7 +31,8 @@
     "flow.spec.ts yerel gerçek Supabase: 1 passed (1.5m); başlangıç ve sonuç beklemesi 16 saniye gözlendi.",
     "Canlı flow.spec.ts: 1 passed (1.0m); iki ayrı başlangıç/devam onayı ve haritaya bitişik hazır satırı doğrulandı. Skor oluşturulmadı.",
     "journal.spec.ts yerel gerçek Supabase: 1 passed (46.3s); sınırlı gelir ve iki turun geçmişi doğrulandı.",
-    "Canlı journal.spec.ts: 1 passed (26.8s); başlangıç 8/5, kale 1/1, orman +2, iki tur geçmişi ve sonuçta yenileme doğrulandı. Skor: 0; test odası otomatik temizlendi."
+    "Canlı journal.spec.ts: 1 passed (26.8s); başlangıç 8/5, kale 1/1, orman +2, iki tur geçmişi ve sonuçta yenileme doğrulandı. Skor: 0; test odası otomatik temizlendi.",
+    "Canlı close.spec.ts: 1 passed (1.1m); oda sahibi yetkisi, canlı kapanış, eski koda 410, yeni oda açma, idempotent işlem, başlamayan maçta 0 skor ve başlamış maçta 220/420 teslim puanı doğrulandı. Testteki 3 oda ve 2 skor temizlendi. Kanıt: /evidence/close.json."
   ],
   "checks": {
     "E1": {

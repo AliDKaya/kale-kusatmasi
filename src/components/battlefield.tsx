@@ -6,7 +6,7 @@ import { Army, EDGES, Game, Order, REGIONS, RegionId, Side, UNITS, UNIT_KEYS, co
 import { Resource } from './icons';
 import HowToPlay from './how-to-play';
 import BattleJournal from './battle-journal';
-type Snapshot = { id:string;code:string;version:number;game:Game|null;side:Side;serverTime:string;players:{id:string;nickname:string;side:Side;ready:boolean}[];ownOrders:Order[] };
+type Snapshot = { id:string;code:string;version:number;closed:boolean;game:Game|null;side:Side;serverTime:string;players:{id:string;nickname:string;side:Side;ready:boolean}[];ownOrders:Order[] };
 type Mode = 'piyade'|'okcu'|'kusatma'|'move'|'defend';
 export default function Battlefield({code}:{code:string}) {
   const [snap,setSnap] = useState<Snapshot|null>(null); const snapshot = useRef<Snapshot|null>(null);
@@ -18,6 +18,7 @@ export default function Battlefield({code}:{code:string}) {
   const [sound,setSound] = useState(false); const audio = useRef<AudioContext|null>(null); const soundRef = useRef(false);
   const [totalRemaining,setTotalRemaining]=useState<number|null>(null);const [reviewRemaining,setReviewRemaining]=useState(0);
   const [copied,setCopied] = useState(false); const [confirm,setConfirm] = useState(false);
+  const [confirmClose,setConfirmClose] = useState(false);
   const lastRequest = useRef(0); const offset = useRef(0); const pending = useRef<ReturnType<typeof setTimeout>|null>(null);
   const submitting = useRef(false); const mounted = useRef(true);
   const resultAnchor = useRef<HTMLElement|null>(null);const phaseAnchor=useRef<HTMLElement|null>(null);
@@ -38,13 +39,14 @@ export default function Battlefield({code}:{code:string}) {
     offset.current = new Date(data.serverTime).getTime()-Date.now();
     const changedTurn = previous?.game?.turn !== data.game?.turn || previous?.game?.phase !== data.game?.phase;
     snapshot.current = data; setSnap(data);
+    if (data.closed) { if (localStorage.getItem('kk:room') === code) localStorage.removeItem('kk:room'); if(pending.current)clearTimeout(pending.current); }
     if(data.game?.phase==='playing')setRemaining(Math.max(0,Math.ceil((new Date(data.game.deadline).getTime()-new Date(data.serverTime).getTime())/1000)));
     setReviewRemaining(data.game?.reviewUntil?Math.max(0,Math.ceil((new Date(data.game.reviewUntil).getTime()-new Date(data.serverTime).getTime())/1000)):0);
     if (!previous || changedTurn || !dirty.current) { draft.current=data.ownOrders;setOrders(data.ownOrders);dirty.current=false; }
     if (previous && changedTurn) {setSelected(null);setArmy(emptyArmy());setError('');beep(data.game?.phase==='finished'?'victory':'turn');}
     const phase=data.game?.phase;const ready=data.players.find(p=>p.side===data.side)?.ready;
     setStatus(!data.game?'İkinci oyuncu bekleniyor. Oda kodunu arkadaşına gönder.':phase==='finished'?'Maç tamamlandı.':phase==='waiting'?(ready?'Hazırsın. Rakibin maça hazır olması bekleniyor.':'İkiniz de Maça hazırım demeden sayaç başlamaz.'):phase==='review'?(ready?'Sonraki tur için hazırsın. Rakibin bekleniyor.':'Tur bitti. Sonuçları inceleyin; ikiniz de hazır olunca sonraki tur başlar.'):ready?'Emirlerin kilitlendi. Rakibin emirleri bekleniyor.':'İki emrini seç, sonra Emirlerim hazır düğmesine bas.');
-  },[beep]);
+  },[beep,code]);
   const refresh = useCallback(async () => {
     try { const data=await api<Snapshot>(`/api/rooms/${code}`); apply(data); }
     catch(e) { if(mounted.current) setError(e instanceof Error?e.message:'Bağlantı kurulamadı.'); }
@@ -124,8 +126,11 @@ export default function Battlefield({code}:{code:string}) {
   }
   async function surrender(){if(!game)return;setBusy(true);try{const data=await api<Snapshot>(`/api/rooms/${code}`,{action:'surrender',operationId:crypto.randomUUID(),turn:game.turn});apply(data);setConfirm(false);}catch(e){setError(e instanceof Error?e.message:'İstek tamamlanamadı.');}finally{setBusy(false);}}
   async function copy(){try{await navigator.clipboard.writeText(code);setCopied(true);setTimeout(()=>setCopied(false),2000);}catch{setError(`Oda kodun: ${code}`);}}
+  async function closeRoom(){if(submitting.current)return;submitting.current=true;setBusy(true);try{const wait=1100-(Date.now()-lastRequest.current);if(wait>0)await new Promise(r=>setTimeout(r,wait));lastRequest.current=Date.now();apply(await api<Snapshot>(`/api/rooms/${code}`,{action:'close',operationId:crypto.randomUUID()}));setConfirmClose(false);setError('');}catch(e){setError(e instanceof Error?e.message:'Oda kapatılamadı.');}finally{submitting.current=false;setBusy(false);}}
   const costs=orders.reduce((total,o)=>{if(o.type==='recruit'){total.gold+=Math.max(1,UNITS[o.unit].gold-(o.at==='D'?1:0));total.wood+=UNITS[o.unit].wood;}return total;},{gold:0,wood:0});
-  return <main className="battle-page"><div className="battle-heading"><div><div className="eyebrow">SAVAŞ MEYDANI</div><h1>Kale Kuşatması</h1></div><div className="room-tools"><button onClick={copy} className="room-code" aria-label="Oda kodunu kopyala">{copied?'Kopyalandı ✓':`ODA ${code} ⧉`}</button><button aria-pressed={sound} onClick={()=>{soundRef.current=!sound;setSound(!sound);if(!sound)beep();}}>{sound?'Ses açık ♫':'Ses kapalı ♩'}</button></div></div>
+  if(snap?.closed)return <main className="battle-page"><section className="phase-panel" role="status"><div><div className="eyebrow">ODA {code}</div><h1>Oda kapatıldı</h1><p>Oda sahibi bu odayı kapattı. Bu kodla yeniden katılım yapılamaz.</p><Link className="primary" href="/">Lobiye dön</Link></div></section></main>;
+  return <main className="battle-page"><div className="battle-heading"><div><div className="eyebrow">SAVAŞ MEYDANI</div><h1>Kale Kuşatması</h1></div><div className="room-tools"><button onClick={copy} className="room-code" aria-label="Oda kodunu kopyala">{copied?'Kopyalandı ✓':`ODA ${code} ⧉`}</button><button aria-pressed={sound} onClick={()=>{soundRef.current=!sound;setSound(!sound);if(!sound)beep();}}>{sound?'Ses açık ♫':'Ses kapalı ♩'}</button>{snap?.side===0&&<button disabled={busy} onClick={()=>setConfirmClose(true)}>Odayı kapat</button>}</div></div>
+    {confirmClose&&<section className="phase-panel" aria-label="Odayı kapatma onayı"><div><h2>Odayı kapatmak istiyor musun?</h2><p>{game&&game.phase!=='waiting'&&game.phase!=='finished'?'Devam eden maçı kapatmak teslim sayılır. Rakibin kazanır ve skorlar kaydedilir.':'Maç başlamadıysa skor yazılmaz. Oda kodu tekrar kullanılamaz.'}</p><div className="result-actions"><button className="primary" disabled={busy} onClick={()=>void closeRoom()}>{busy?'Kapatılıyor…':'Evet, odayı kapat'}</button><button disabled={busy} onClick={()=>setConfirmClose(false)}>Vazgeç</button></div></div></section>}
     <HowToPlay compact/>
     {!network&&<div className="connection-warning" role="status">Bağlantı kesildi. Otomatik yeniden bağlanma deneniyor; sunucu sayacı sürüyor.</div>}
     {error&&<div className="error" role="alert">{error} <button onClick={()=>void refresh()}>Yeniden dene</button></div>}

@@ -9,6 +9,7 @@ export const orderSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('defend'), at: region }).strict(),
 ]);
 export const actionSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('close'), operationId: z.uuid() }).strict(),
   z.object({ action: z.literal('continue'), operationId: z.uuid(), turn: z.number().int().min(1).max(10) }).strict(),
   z.object({ action: z.literal('orders'), operationId: z.uuid(), turn: z.number().int().min(1).max(10), orders: z.array(orderSchema).max(2), ready: z.boolean() }).strict(),
   z.object({ action: z.literal('resolve'), operationId: z.uuid(), turn: z.number().int().min(1).max(10) }).strict(),

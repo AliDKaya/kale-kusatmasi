@@ -32,3 +32,5 @@ Vercel CLI ile ayrı `kale-kusatmasi` projesi kullanılır; GitHub zorunlu deği
 ## Güncel oyun akışı
 
 İki oyuncu da Maça hazırım demeden ilk sayaç başlamaz. Her tur iki gizli emir hazırlanır; iki emir onayı veya 15 saniye sonunda çözüm yapılır. Sonuç aşamasında tur sayacı durur; iki oyuncu Sonraki tura hazırım demeden yeni tur başlamaz. Toplam maç sınırı başlangıç onayları tamamlandıktan sonra üç dakikadır. Hiç bölgesi ve ordusu kalmayan oyuncu elenir. Başlangıç 8 altın / 5 odun; kale geliri 1/1, maden 3 altın, orman 2 odundur.
+
+Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. Başlamayan maçta skor yazılmaz; başlamış maçta kapatmak teslim sayılır. Kapanış diğer oyuncuya canlı bildirilir, eski kodla katılım engellenir ve yeni oda açılabilir.
