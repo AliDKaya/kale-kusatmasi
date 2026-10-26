@@ -1,0 +1,13 @@
+{
+  "baseURL": "https://kale-kusatmasi.vercel.app",
+  "date": "2026-10-26T10:31:11.820Z",
+  "checks": {
+    "liveScoreLatencyMs": 464,
+    "scoreCooldown": true,
+    "uniqueScore": true,
+    "outsideTop10": true,
+    "rankingAndTies": true,
+    "dateFilter": true,
+    "directWriteDenied": 403
+  }
+}

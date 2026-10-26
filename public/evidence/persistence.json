@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-26T10:38:53.192Z",
+  "url": "https://kale-kusatmasi.vercel.app/api/leaderboard",
+  "anchors": 7,
+  "persisted": true,
+  "after": {
+    "skorlar": [
+      {
+        "sira": 1,
+        "ad": "ali ayak",
+        "skor": 480,
+        "zaman": "2026-10-26T10:36:28.077Z"
+      },
+      {
+        "sira": 2,
+        "ad": "ali ayak",
+        "skor": 440,
+        "zaman": "2026-10-26T10:24:34.879Z"
+      },
+      {
+        "sira": 3,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:21.048Z"
+      },
+      {
+        "sira": 4,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:28.956Z"
+      },
+      {
+        "sira": 5,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:35.998Z"
+      },
+      {
+        "sira": 6,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:43.097Z"
+      },
+      {
+        "sira": 7,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:50.274Z"
+      },
+      {
+        "sira": 8,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:30:57.353Z"
+      },
+      {
+        "sira": 9,
+        "ad": "TestSkorB604559",
+        "skor": 420,
+        "zaman": "2026-10-26T10:31:06.357Z"
+      },
+      {
+        "sira": 10,
+        "ad": "TestBati866169",
+        "skor": 320,
+        "zaman": "2026-10-26T10:18:38.579Z"
+      }
+    ]
+  }
+}

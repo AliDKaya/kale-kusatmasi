@@ -1,0 +1,13 @@
+{
+  "baseURL": "https://kale-kusatmasi.vercel.app",
+  "date": "2026-10-26T10:44:30.837Z",
+  "checks": {
+    "keyboardMainAction": true,
+    "resultAboveMap": true,
+    "loserScore": 220,
+    "winnerScore": 420,
+    "scoreMatchesAPI": true,
+    "mobile375": true,
+    "report80": true
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "updated": "26.10.2026 13:38:53",
+  "productionUrl": "https://kale-kusatmasi.vercel.app",
+  "rounds": [
+    {
+      "round": 1,
+      "score": 74,
+      "date": "26.10.2026 13:36:48"
+    },
+    {
+      "round": 2,
+      "score": 80,
+      "date": "26.10.2026 13:38:53"
+    }
+  ],
+  "localChecks": [
+    "npm test: 18 passed, 0 failed.",
+    "npx tsc --noEmit: exit 0.",
+    "npm run lint: 0 errors; mevcut JPEG referanslarının img kullanımı için Next.js öneri uyarıları.",
+    "Canlı multiplayer.spec.ts: 1 passed (57.3s).",
+    "Canlı scoreboard.spec.ts: 1 passed (1.2m).",
+    "Canlı clarity.spec.ts: 1 passed (23.0s).",
+    "Canlı result.spec.ts: 1 passed (35.2s); 220/420 puan dökümü API ile aynı.",
+    "Kullanıcı isteğiyle skor tablosu sıfırlandı. Son testten kalan 2 skor ve 15 kontrollü test odası temizlendi."
+  ],
+  "checks": {
+    "E1": {
+      "points": 5,
+      "proof": "Canlı Playwright: takma ad → oda aç/katıl → oyun. Clipboard okuması oda koduyla aynı. Üç adımlı rehber görüldü.",
+      "file": "clarity.json"
+    },
+    "E2": {
+      "points": 8,
+      "proof": "İki bağımsız bağlamda sunucunun tur sonucu 703 ms içinde eşlendi; sayfa yenilenmedi. Rakip emir payload’u gizli kaldı.",
+      "file": "integration.json"
+    },
+    "E3": {
+      "points": 5,
+      "proof": "İki bağlamda Presence doğrulandı. Ayrı odaya üye üçüncü oyuncunun erişimi 403, dolu odaya katılımı 409 döndü. Sekme kapanınca bağlantı yok durumu görüldü.",
+      "file": "clarity.json",
+      "extra": "integration.json"
+    },
+    "E4": {
+      "points": 6,
+      "proof": "Seçilen emir yerel listede anında görüldü; kaynak/savaş sunucu çözümüyle değişti. Asker hareketi, bölge tarafları, hazır durumları ve Web Audio oscillator üretimi doğrulandı.",
+      "file": "clarity.json"
+    },
+    "E5": {
+      "points": 5,
+      "proof": "Bağlam offline/online yapıldı; uyarı ve yeniden bağlanma doğrulandı. Yenilemede aynı oyuncu odaya döndü. Geçersiz oda kodu anlaşılır hata verdi.",
+      "file": "integration.json",
+      "extra": "clarity.json"
+    },
+    "E6": {
+      "points": 6,
+      "proof": "375 px: documentElement.scrollWidth ≤ 375. Bölge hedefleri en az 44×44 px; Tab odağı doğrulandı. Mobil görüntü incelendi, görünür odak ve okunaklı taraf etiketleri var.",
+      "file": "clarity.json",
+      "image": "clear-mobile-map.png"
+    },
+    "L1": {
+      "points": 6,
+      "proof": "Yeniden dağıtım öncesi/sonrası GET yanıtlarında 7 kontrollü skorun ad, puan ve zamanı aynı kaldı.",
+      "file": "persistence.json"
+    },
+    "L2": {
+      "points": 8,
+      "proof": "İkinci bağlamdaki /leaderboard yeni tamamlanan maçın skorunu yenilemeden 464 ms içinde gösterdi.",
+      "file": "scoreboard.json"
+    },
+    "L3": {
+      "points": 5,
+      "proof": "12’den fazla gerçek kontrollü maç skoru içinden tam 10 kayıt geldi. Puan azalan, eşit puanda zaman artan sıralama doğrulandı.",
+      "file": "scoreboard.json"
+    },
+    "L4": {
+      "points": 5,
+      "proof": "Kendi ilk 10 skoru vurgulandı. Ayrı test oyuncusunun ilk 10 dışındaki sırası ayrıca görüldü ve mobil ekran görüntüsü alındı.",
+      "file": "scoreboard.json",
+      "image": "outside-top10.png"
+    },
+    "L5": {
+      "points": 5,
+      "proof": "Kontrollü tamamlanmış test skorunun zamanı geçici olarak iki gün önceye alındı. Bugün filtresinde kayboldu, Tüm zamanlar’da geri geldi; zaman sonra geri yüklendi.",
+      "file": "scoreboard.json"
+    },
+    "L6": {
+      "points": 6,
+      "proof": "Keyfi skor alanı 400; doğrudan tablo yazımı 403. Beş saniye içindeki ikinci skor 429. Tekrarlanan işlem yalnızca bir maç/oyuncu skoru oluşturdu; bitmiş maça yeni emir 409.",
+      "file": "scoreboard.json",
+      "extra": "integration.json"
+    },
+    "P1": {
+      "points": 5,
+      "proof": "Kimlik doğrulamasız curl -sI: /, /leaderboard, /rapor ve /api/leaderboard HTTP/1.1 200 OK. Yeni Playwright bağlamı Vercel girişi istemeden açıldı.",
+      "file": "http.txt"
+    },
+    "P2": {
+      "points": 3,
+      "proof": "Rapor oyun adı, tema/kısıt durumu, iki cümlelik fikir seçimi, en az beş cümlelik oynanış, 15 madde, bölüm toplamları ve gerçek çıktıları içerir.",
+      "file": "clarity.json"
+    },
+    "P3": {
+      "points": 2,
+      "proof": "Teslim alan adı kale-kusatmasi.vercel.app; kişisel kimlik veya öğrenci numarası içermiyor. Rapor yalnızca oyun bilgisi ve kontrollü test takma adlarını kullanıyor.",
+      "file": "http.txt"
+    }
+  },
+  "blockers": []
+}

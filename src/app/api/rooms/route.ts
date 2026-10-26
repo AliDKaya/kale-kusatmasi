@@ -1,0 +1,12 @@
+import { z } from 'zod';
+import { identity, createRoom, joinRoom } from '@/lib/server';
+import { nicknameSchema, codeSchema } from '@/lib/schema';
+import { apiError, body } from '@/lib/http';
+export const runtime = 'nodejs';
+export async function POST(request: Request) {
+  try {
+    const user = await identity(request);
+    const input = z.object({ nickname: nicknameSchema, code: codeSchema.optional() }).strict().parse(await body(request));
+    return Response.json(input.code ? await joinRoom(user,input.code,input.nickname) : await createRoom(user,input.nickname));
+  } catch (e) { return apiError(e); }
+}
