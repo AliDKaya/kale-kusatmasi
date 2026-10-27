@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-27",
+  "environment": "Local browser with mocked game API; no database, auth user or leaderboard writes",
+  "checks": [
+    "23 road connections terminate inside settlement outlines",
+    "All 13 settlement centers shared by roads, army animation and caravan positions",
+    "Explicit source army required when several are in range",
+    "Upgrade, siege, cannon and cancel enter draft and pass validateOrders",
+    "No immediate castle wall or bank resource changes",
+    "Full repair, insufficient resources, four-order cap and ready-lock show disabled reason",
+    "375px document width = 375; no outside-map horizontal overflow",
+    "Information, drag, pin and resize controls do not submit orders"
+  ],
+  "productionCheck": "Pending final live smoke",
+  "pointChanges": 0
+}

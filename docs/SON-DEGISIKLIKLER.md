@@ -13,3 +13,10 @@
 İlk DENGE-RAPORU kontrollü, kervansız/mareşalsiz savaş ölçümüdür. Yeni ekonominin ve üç bot seviyesinin insan kazanma oranları ölçülmedi. Kervan için kaynak korunumu; mareşal için bonusun katlanmaması; bot için bütçe/yasal emir ve iki haritada8tur kontrolleri yapıldı. Bunlar tam oyun dengesi kanıtı değildir.
 
 Özel toparlanma/Milli Mücadele etkinliği uygulanmadı; bilerek geri düşmeyi ödüllendirmeyen ayrı tasarım gerekiyor. Geniş yeni denge deneyi ve sonuca göre gerekçeli buff/nerf raporu sonraki çalışmaya kaldı. Rastgele güç değişikliği yapılmadı.
+
+## Harita ve ferman güncellemesi
+- Bölge adları büyüdü ve tamamı taraf rengine boyandı. Sınırlar yapıları sarıyor; takım rengi dışında hafif renkli kırık beyaz neon çekirdek var.
+- Fermanlar taşınabilir, açıkken boyutlandırılabilir, kaydırılabilir ve raptiyeyle sabitlenebilir. Sıfırlama konum/boyutları geri alır, raptiyeleri takar. Tümü açık başlangıç düzeni çakışmaz.
+- 13 görsel merkez ve 23 kesikli yol hizalandı; asker ve kervan görselleri aynı merkezleri kullanır. Fermanların yapı örtüşmeleri düzeltildi.
+- Büyük haritada kale fermanından yükselt/onar/kuşat/Şahi/durdur emri verilir. Kaynak ordu açıkça seçilir; hazır, bütçe, menzil ve emir hakkı kısıtları korunur. Sağ panelde yinelenen kale taktikleri kaldırıldı.
+- Yerel taktik sınaması geçti: kaynak seçimi, dört emir, yetersiz bütçe, kilitli tur, 375 px ve işlemin yalnız taslakta kalması. Skor oluşturulmadı.

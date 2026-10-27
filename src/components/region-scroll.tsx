@@ -1,12 +1,12 @@
 'use client';
-import {useEffect,useRef,useState,type CSSProperties,type PointerEvent as ReactPointerEvent} from 'react';
+import {useEffect,useRef,useState,type CSSProperties,type ReactNode,type PointerEvent as ReactPointerEvent} from 'react';
 import {count,UNIT_KEYS,UNITS,type Game,type RegionId,type Side} from '@/lib/game';
 import {STRATEGY_KEYS,STRATEGY_UNITS,armyHealth,regionIncome,resourceText} from '@/lib/strategy';
 
 // Scroll anchors stay separate from the artwork centers used by roads and troops.
 const SCROLL_ANCHORS:Record<string,{x:number;y:number}>={A:{x:12,y:14},B:{x:34,y:12},C:{x:12,y:38},D:{x:50,y:58},E:{x:88,y:60},F:{x:50,y:86},G:{x:88,y:88},H:{x:34,y:34},I:{x:62,y:13},J:{x:16,y:78},K:{x:48,y:35},L:{x:65,y:58},M:{x:69,y:78}};
 type Region={id:RegionId;name:string;x:number;y:number;kind:string};
-export default function RegionScroll({region:r,game,side,advanced,expanded,alwaysOpen,selected,reachable,canOrder,onToggle,onCommand,onHover}:{region:Region;game?:Game|null;side:Side;advanced:boolean;expanded:boolean;alwaysOpen:boolean;selected:boolean;reachable:boolean;canOrder:boolean;onToggle:()=>void;onCommand:()=>void;onHover:(id:RegionId|null)=>void}){
+export default function RegionScroll({region:r,game,side,advanced,expanded,alwaysOpen,selected,reachable,canOrder,onToggle,onCommand,onHover,children}:{children?:ReactNode;region:Region;game?:Game|null;side:Side;advanced:boolean;expanded:boolean;alwaysOpen:boolean;selected:boolean;reachable:boolean;canOrder:boolean;onToggle:()=>void;onCommand:()=>void;onHover:(id:RegionId|null)=>void}){
  const summaryRef=useRef<HTMLButtonElement>(null),paperRef=useRef<HTMLElement>(null);
  const storageKey=`kk:scroll-layout:${advanced?'strategy':'classic'}:${alwaysOpen?'all':'summary'}:${r.id}`;
  type Layout={pinned:boolean;x?:number;y?:number;width?:number;height?:number};
@@ -75,6 +75,7 @@ export default function RegionScroll({region:r,game,side,advanced,expanded,alway
    </div>
    <div className="scroll-unroll" id={`scroll-${r.id}`} inert={!expanded} aria-hidden={!expanded}><div className="scroll-unroll-inner"><div className="scroll-content">
     <div className="scroll-detail-heading"><strong>{r.name}</strong>{!alwaysOpen&&<button type="button" className="scroll-close" onClick={()=>{onToggle();summaryRef.current?.focus();}} aria-label={`${r.id} fermanını kapat`}>×</button>}</div>
+    {children}
     <p className="scroll-owner-detail"><b>Sahiplik:</b> {label}{advanced?` · Sv.${t?.level??1}`:''}</p><dl className="scroll-unit-list">{keys.map(u=><div key={u}><dt>{advanced?STRATEGY_UNITS[u].name:UNITS[u].name}</dt><dd>{t?.army[u]??0}</dd></div>)}</dl>
     {advanced&&<><p><b>Ordu canı:</b> {hp}/{max}{marshal&&<span className="scroll-marshal"> ★ Mareşal</span>}</p><p><b>Gelişim:</b> {t?.level??1}. seviye · {t?.heldTurns??0} tur elde{(t?.level??1)>=3?' · savunma +1':''}</p><p><b>Tur üretimi:</b> {resourceText(regionIncome(r.id,t?.level??1))}</p>{game?.logistics&&<p><b>Depoda:</b> {resourceText(game.logistics.depots[r.id])}</p>}</>}
     {!advanced&&<p><b>Gelir:</b> {r.kind==='forest'?'+2 odun / tur':r.kind==='mine'?'+3 altın / tur':r.kind==='village'?'Asker toplamada −1 altın':'+1 altın, +1 odun / tur'}</p>}
