@@ -1,17 +1,18 @@
+// Shared artwork centers for roads, city buttons, caravans and combat animation.
 export const STRATEGY_REGIONS=[
- {id:'A',name:'Batı Kalesi',x:12,y:14,kind:'castle'},
- {id:'B',name:'Batı Ormanı',x:34,y:12,kind:'forest'},
+ {id:'A',name:'Batı Kalesi',x:10.3,y:11.5,kind:'castle'},
+ {id:'B',name:'Batı Ormanı',x:34,y:13,kind:'forest'},
  {id:'C',name:'Batı Taş Ocağı',x:12,y:38,kind:'mine'},
- {id:'D',name:'Merkez Tahıl Köyü',x:50,y:58,kind:'village'},
- {id:'E',name:'Doğu Taş Ocağı',x:88,y:60,kind:'mine'},
- {id:'F',name:'Doğu Ormanı',x:50,y:86,kind:'forest'},
- {id:'G',name:'Doğu Kalesi',x:88,y:88,kind:'castle'},
- {id:'H',name:'Batı Tahıl Köyü',x:34,y:34,kind:'village'},
- {id:'I',name:'Kuzey Taş Ocağı',x:62,y:13,kind:'mine'},
- {id:'J',name:'Güney Ormanı',x:16,y:78,kind:'forest'},
- {id:'K',name:'Batı Gözetleme Köyü',x:48,y:35,kind:'village'},
- {id:'L',name:'Doğu Gözetleme Köyü',x:65,y:58,kind:'village'},
- {id:'M',name:'Doğu Tahıl Köyü',x:69,y:78,kind:'village'},
+ {id:'D',name:'Merkez Tahıl Köyü',x:50.2,y:52,kind:'village'},
+ {id:'E',name:'Doğu Taş Ocağı',x:88.6,y:56.1,kind:'mine'},
+ {id:'F',name:'Doğu Ormanı',x:47.4,y:81,kind:'forest'},
+ {id:'G',name:'Doğu Kalesi',x:91,y:82.4,kind:'castle'},
+ {id:'H',name:'Batı Tahıl Köyü',x:34.6,y:30.4,kind:'village'},
+ {id:'I',name:'Kuzey Taş Ocağı',x:62.8,y:15.5,kind:'mine'},
+ {id:'J',name:'Güney Ormanı',x:11.9,y:70.8,kind:'forest'},
+ {id:'K',name:'Batı Gözetleme Köyü',x:52.2,y:33.5,kind:'village'},
+ {id:'L',name:'Doğu Gözetleme Köyü',x:68.5,y:52,kind:'village'},
+ {id:'M',name:'Doğu Tahıl Köyü',x:67.8,y:70.4,kind:'village'},
 ] as const;
 export type StrategyRegionId=typeof STRATEGY_REGIONS[number]['id'];
 export const STRATEGY_EDGES:[StrategyRegionId,StrategyRegionId][]=[['A','B'],['A','C'],['A','H'],['B','H'],['C','H'],['H','K'],['B','I'],['C','J'],['I','K'],['J','K'],['K','D'],['K','L'],['D','L'],['I','L'],['J','L'],['L','M'],['M','E'],['M','F'],['M','G'],['E','G'],['F','G'],['E','I'],['F','J']];

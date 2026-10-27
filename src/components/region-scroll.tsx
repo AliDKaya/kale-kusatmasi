@@ -3,6 +3,8 @@ import {useEffect,useRef,useState,type CSSProperties,type PointerEvent as ReactP
 import {count,UNIT_KEYS,UNITS,type Game,type RegionId,type Side} from '@/lib/game';
 import {STRATEGY_KEYS,STRATEGY_UNITS,armyHealth,regionIncome,resourceText} from '@/lib/strategy';
 
+// Scroll anchors stay separate from the artwork centers used by roads and troops.
+const SCROLL_ANCHORS:Record<string,{x:number;y:number}>={A:{x:12,y:14},B:{x:34,y:12},C:{x:12,y:38},D:{x:50,y:58},E:{x:88,y:60},F:{x:50,y:86},G:{x:88,y:88},H:{x:34,y:34},I:{x:62,y:13},J:{x:16,y:78},K:{x:48,y:35},L:{x:65,y:58},M:{x:69,y:78}};
 type Region={id:RegionId;name:string;x:number;y:number;kind:string};
 export default function RegionScroll({region:r,game,side,advanced,expanded,alwaysOpen,selected,reachable,canOrder,onToggle,onCommand,onHover}:{region:Region;game?:Game|null;side:Side;advanced:boolean;expanded:boolean;alwaysOpen:boolean;selected:boolean;reachable:boolean;canOrder:boolean;onToggle:()=>void;onCommand:()=>void;onHover:(id:RegionId|null)=>void}){
  const summaryRef=useRef<HTMLButtonElement>(null),paperRef=useRef<HTMLElement>(null);
@@ -27,16 +29,19 @@ export default function RegionScroll({region:r,game,side,advanced,expanded,alway
  const hp=advanced&&t?armyHealth(t):0,max=advanced&&t?STRATEGY_KEYS.reduce((sum,u)=>sum+(t.army[u]??0)*STRATEGY_UNITS[u].hp,0):0;
  const castleSide=r.id==='A'?0:r.id==='G'?1:null;const castle=castleSide===null?null:game?.players[castleSide];
  const style={left:`${r.x}%`,top:`${r.y}%`} as CSSProperties;
+ const anchor=advanced?SCROLL_ANCHORS[r.id]:r;
+ const nudge=advanced?({L:{x:12,y:-20},M:{x:0,y:-20},J:{x:-14,y:-18},G:{x:-frame.width*.12,y:0}}[r.id as 'L'|'M'|'J'|'G']??{x:0,y:0}):{x:0,y:0};
  const offset=advanced?({A:16,B:16,I:20,C:28,H:24,K:32,D:8,L:12,E:16,J:36,F:16,M:24,G:12}[r.id]??16):16;
- const top=expanded?(r.y>=65?-210:r.y>=45?-75:offset):offset;
- const edge=r.x<15?(expanded?(advanced?10:52):12):r.x>85?(expanded?(advanced?-10:-52):-12):(advanced?({H:-20,K:20,D:-16,L:16}[r.id as 'H'|'K'|'D'|'L']??0):0);
+ const top=expanded?(anchor.y>=65?-210:anchor.y>=45?-75:offset):offset;
+ const edge=anchor.x<15?(expanded?(advanced?10:52):12):anchor.x>85?(expanded?(advanced?-10:-52):-12):(advanced?({H:-20,K:20,D:-16,L:16}[r.id as 'H'|'K'|'D'|'L']??0):0);
  const ids=advanced?['A','B','I','C','H','K','D','L','E','J','F','M','G']:['A','B','E','D','C','F','G'];
  const index=ids.indexOf(r.id),columns=advanced?4:3,rows=Math.ceil(ids.length/columns);
  const cellWidth=frame.width/columns,cellHeight=frame.height/rows;
  const width=expanded?Math.min(Math.max(layout.width??(alwaysOpen?Math.min(206,cellWidth-20):206),168),Math.min(360,frame.width-16)):156;
  const height=expanded?Math.min(Math.max(layout.height??(alwaysOpen?Math.min(226,cellHeight-18):226),104),Math.min(360,frame.height-16)):38;
- const homeX=alwaysOpen?(index%columns+.5)*cellWidth-width/2:r.x/100*frame.width+edge-width/2;
- const homeY=alwaysOpen?Math.floor(index/columns)*cellHeight+9:r.y/100*frame.height+top;
+ const homeX=alwaysOpen?(index%columns+.5)*cellWidth-width/2:anchor.x/100*frame.width+edge+nudge.x-width/2;
+ const clearBottom=advanced?({A:20.4,B:17.3,C:44.8,I:21.4,E:63.2}[r.id as 'A'|'B'|'C'|'I'|'E']):undefined;
+ const homeY=alwaysOpen?Math.floor(index/columns)*cellHeight+9:!expanded&&clearBottom!==undefined?clearBottom/100*frame.height+8:anchor.y/100*frame.height+top+nudge.y;
  const x=Math.max(8,Math.min(layout.x===undefined?homeX:layout.x*frame.width,frame.width-width-8));
  const y=Math.max(8,Math.min(layout.y===undefined?homeY:layout.y*frame.height,frame.height-height-8));
  const paperStyle:CSSProperties={left:x-r.x/100*frame.width,top:y-r.y/100*frame.height,transform:'none',width,height:expanded?height:undefined,'--paper-body-height':`${height-44}px`} as CSSProperties;
