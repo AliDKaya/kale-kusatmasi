@@ -8,6 +8,6 @@
 - [x] Son Direniş: yaşayan mareşalin ordusunda maçta bir kez, 2 altın + 2 tahıl, toplam en fazla +4 can. O tur yürüme/atış yok; savunma yapılabilir. İki taraf için aynı hak; otomatik kaybeden bonusu yok.
 - [x] Önceden eklenen kervan, mareşal, iki haritalı antrenman ve ayrı sıralamalar korunuyor.
 
-**Sınama:** 114 kural testi, 36 önce + 36 son kontrollü bot maçı, ekonomi/kuşatma/mareşal/toparlanma karşılaştırmaları. Taktik düğmeleri masaüstü ve 375 px arayüzde sınandı; sahte API yanıtları kullanıldı, test skoru yazılmadı. Son yayın doğrulaması devam kaydına yazılır.
+**Sınama:** 114 kural testi, 36 önce + 36 son kontrollü bot maçı, ekonomi/kuşatma/mareşal/toparlanma karşılaştırmaları. Taktik düğmeleri masaüstü ve 375 px arayüzde sınandı; sahte API yanıtları kullanıldı, test skoru yazılmadı. Son kodun canlı arayüz kontrolü ve beş açık adresin 200 yanıtı doğrulandı.
 
 **Kalan:** insanlarla taraf değişimli denge denemesi; Şahi ve takasın daha çok kullanıldığı stratejiler. Bunlar ölçülmeden kusursuz denge iddiası yok. [Kısa denge raporu](DENGE-GUNCEL.md).

@@ -14,8 +14,15 @@
   ],
   "productionCheck": {
     "url": "https://kale-kusatmasi.vercel.app",
-    "commit": "ea5965c",
-    "result": "Passed desktop and 375px browser smoke with mocked game API; real auth/player/score mutations intercepted"
+    "commit": "2a92deb",
+    "result": "Passed desktop and 375px browser smoke including rally button and visible rally overlay; mocked game API, no real player or score writes",
+    "publicRoutes": {
+      "/": 200,
+      "/leaderboard": 200,
+      "/rapor": 200,
+      "/api/leaderboard": 200,
+      "/antrenman": 200
+    }
   },
   "pointChanges": 0,
   "localGameRules": {
