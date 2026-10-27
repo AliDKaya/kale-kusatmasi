@@ -1,5 +1,5 @@
 {
-  "updated": "27.10.2026 03:09:26",
+  "updated": "27.10.2026 03:20:27",
   "productionUrl": "https://kale-kusatmasi.vercel.app",
   "rounds": [
     {
@@ -17,6 +17,12 @@
       "score": 80,
       "date": "26.10.2026 14:34:12",
       "note": "İki onaylı başlangıç/sonuç aşamaları, tur geçmişi ve kaynak dengesi canlıda doğrulandı."
+    },
+    {
+      "round": 4,
+      "score": 80,
+      "date": "27.10.2026 03:20:27",
+      "note": "İki oda türü, 13 bölgeli kuşatma, yeni asker/ekonomi/öncelik, savaş anlatımı ve canlı doğrulama; temel rubrik puanı korunuyor. Denge ölçümleri insan kazanma oranı değildir."
     }
   ],
   "localChecks": [
@@ -36,20 +42,21 @@
     "27.10 güncellemesi: npm test 65 passed, tsc exit 0; lint 0 errors, yalnız img öneri uyarıları.",
     "Üretim derlemesi geçti; /birlikler dahil tüm sayfalar üretildi.",
     "Yerel gerçek Supabase/Edge strategy.spec.ts: 3 passed (1.2m). İki oda türü, 4 emir, 13 bölge, ses buffer üretimi, hareket/top animasyonu, 4 birlik tanıtımı, kişisel kozmetik ve mobil harita kontrolü. 2 oda/4 test oturumu temizlendi, skor 0.",
-    "Offline scripts/balance.ts: 5 saha, 4 kuşatma senaryosu; veritabanı ve skor yazımı yok. Ham çıktı balance.json; insan kazanma oranı tahmini değildir."
+    "Offline scripts/balance.ts: 5 saha, 4 kuşatma senaryosu; veritabanı ve skor yazımı yok. Ham çıktı balance.json; insan kazanma oranı tahmini değildir.",
+    "Canlı 27.10: yeni büyük mod 1 passed (36.9s), Birlikler tanıtımı ve klasik/kozmetik/skor filtreleri üretim koşusunda geçti. Büyük modda 13 bölge, 4 emir, ses/animasyon, tarafsız meydan savaşı, eşit olaylar, Şahi beklemesi, onarım ve 375px pan doğrulandı. Bu son koşu 1 oda/2 kullanıcı temizledi, skor 0. Test beklemesi sunucu saatine ve 1sn işlem sınırına uyarlandı."
   ],
   "checks": {
     "E1": {
       "points": 5,
       "proof": "Canlı Playwright: takma ad → oda aç/katıl → oyun. Clipboard okuması oda koduyla aynı. Üç adımlı rehber görüldü.",
       "file": "clarity.json",
-      "extra": "flow.json"
+      "extra": "strategy.json"
     },
     "E2": {
       "points": 8,
       "proof": "İki bağımsız bağlamda sunucunun tur sonucu 703 ms içinde eşlendi; sayfa yenilenmedi. Rakip emir payload’u gizli kaldı.",
       "file": "integration.json",
-      "extra": "flow.json"
+      "extra": "strategy.json"
     },
     "E3": {
       "points": 5,
@@ -59,9 +66,9 @@
     },
     "E4": {
       "points": 6,
-      "proof": "Seçilen emir yerel listede anında görüldü; kaynak/savaş sunucu çözümüyle değişti. Asker hareketi, bölge tarafları, hazır durumları ve Web Audio oscillator üretimi doğrulandı.",
+      "proof": "Canlı yeni mod: server olaylarından hareket/Şahi atışı, gerçek can kaybı ve iki oyuncuda eşit replay; WebAudio buffer üretimi doğrulandı. Birlik tanıtımındaki dört saldırı/yürüyüş ve açıklamalar üretim koşusunda geçti.",
       "file": "clarity.json",
-      "extra": "journal.json"
+      "extra": "strategy.json"
     },
     "E5": {
       "points": 5,
@@ -71,10 +78,10 @@
     },
     "E6": {
       "points": 6,
-      "proof": "375 px: documentElement.scrollWidth ≤ 375. Bölge hedefleri en az 44×44 px; Tab odağı doğrulandı. Mobil görüntü incelendi, görünür odak ve okunaklı taraf etiketleri var.",
+      "proof": "375 px belge yatay taşması yok. Büyük harita yalnız kendi alanında kaydırılıyor; klasik kozmetik kişi bazında kalıcı. Birlikler sayfası mobil ve konsol hatasız kontrol edildi.",
       "file": "clarity.json",
-      "image": "journal-mobile.png",
-      "extra": "journal.json"
+      "image": "strategy-mobile.png",
+      "extra": "strategy.json"
     },
     "L1": {
       "points": 6,

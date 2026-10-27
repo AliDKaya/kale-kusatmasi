@@ -1,6 +1,6 @@
 {
-  "baseURL": "http://localhost:3004",
-  "date": "2026-10-26T23:56:36.450Z",
+  "baseURL": "https://kale-kusatmasi.vercel.app",
+  "date": "2026-10-27T00:18:27.925Z",
   "checks": {
     "soloPreview13": true,
     "modeFromRoom": true,
