@@ -32,6 +32,7 @@ export function orderCost(g:Game,side:Side,o:Order):Resources{
  if(o.type==='cannon'){const n=g.regions[o.from].army.sahi??0;return {gold:n*2,wood:0,stone:n*2,grain:0};}
  if(o.type==='recruit'){const n=o.quantity??1;const c=STRATEGY_UNITS[o.unit].cost;return{gold:Math.max(1,c.gold-(o.at==='D'?1:0))*n,wood:c.wood*n,stone:c.stone*n,grain:c.grain*n};}
  if(o.type==='upgrade'){const level=g.players[side].wallLevel??1;return{gold:2,wood:3*level,stone:4*level,grain:0};}
+ if(o.type==='rally')return{gold:2,wood:0,stone:0,grain:2};
  if(o.type==='repair')return{gold:0,wood:2,stone:3,grain:2};return zeroResources();
 }
 export function plannedCost(g:Game,side:Side,orders:Order[]):Resources{const result=zeroResources();for(const o of orders){const c=orderCost(g,side,o);for(const k of RESOURCE_KEYS)result[k]+=c[k];}return result;}
@@ -82,6 +83,14 @@ export function validateStrategyOrders(g:Game,side:Side,orders:Order[]):void{
    if(actions.has('wall'))throw new Error('Bir turda tek sur işlemi yapılabilir.');actions.add('wall');
    if(o.type==='upgrade'&&(g.players[side].wallLevel??1)>=3)throw new Error('Surlar en fazla 3. seviye olabilir.');
    if(o.type==='repair'&&(g.players[side].wall??0)>=(g.players[side].wallLevel??1)*8&&!g.players[side].breaches?.length&&g.players[side].hp===20&&armyHealth(t)===UNIT_KEYS.reduce((n,u)=>n+(t.army[u]??0)*STRATEGY_UNITS[u].hp,0))throw new Error('Kale, surlar ve garnizon zaten tam dayanıklı.');
+   if(o.type==='repair'){if(actions.has(`heal:${at}`))throw new Error('Aynı orduda onarım ve Son Direniş birlikte kullanılamaz.');actions.add(`heal:${at}`);}
+  }else if(o.type==='rally'){
+   if(g.command?.revision!==2||!g.command.rallyUsed)throw new Error('Bu eski odada Son Direniş yok; yeni Kuşatma Vadisi odası aç.');
+   if(g.command.rallyUsed[side]||actions.has('rally'))throw new Error('Son Direniş maçta yalnız bir kez kullanılabilir.');
+   if(!Object.values(t.veterans??{}).flat().some(v=>v.marshal))throw new Error('Son Direniş için bu orduda yaşayan mareşal olmalı.');
+   if(armyHealth(t)>=STRATEGY_KEYS.reduce((sum,u)=>sum+(t.army[u]??0)*STRATEGY_UNITS[u].hp,0))throw new Error('Orduda iyileştirilecek yaralı yok.');
+   if(actions.has(`heal:${at}`))throw new Error('Aynı orduda onarım ve Son Direniş birlikte kullanılamaz.');
+   actions.add(`heal:${at}`);actions.add('rally');reserve(at,[...STRATEGY_KEYS]);
   }else if(o.type==='defend'){
    if(actions.has(`defend:${at}`)||!count(t.army))throw new Error('Savunma için farklı bir bölgede en az bir birlik gerekli.');actions.add(`defend:${at}`);
   }else if(o.type==='cancel'){
@@ -131,6 +140,11 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
   const at='from' in o?o.from:o.at;
   if(o.type==='recruit')recruits.push({side,order:o});
   else if(o.type==='defend'){defense.add(at);log.push(`${sideName(side)}: ${label(at)} savunmada; gelen hasar yarıya iner.`);}
+  else if(o.type==='rally'){
+   g.command!.rallyUsed![side]=true;let restored=0;
+   for(const u of STRATEGY_KEYS){sortHealth(forces[at],u);for(let i=0;i<forces[at].health[u].length&&restored<4;i++){const n=Math.min(4-restored,STRATEGY_UNITS[u].hp-forces[at].health[u][i]);forces[at].health[u][i]+=n;restored+=n;}}
+   log.push(`${sideName(side)}: ${label(at)} Son Direniş; toplam +${restored} can. Maçlık hak kullanıldı; ordu bu tur yürüyemez veya ateş edemez.`);event({phase:'prepare',kind:'rally',at,side,amount:restored,text:`Son Direniş · ${label(at)} · +${restored} can`});
+  }
   else if(o.type==='upgrade'){g.players[side].wallLevel=(g.players[side].wallLevel??1)+1;g.players[side].wall=(g.players[side].wall??0)+8;log.push(`${sideName(side)}: surlar ${g.players[side].wallLevel}. seviye, +8 dayanıklılık.`);event({phase:'prepare',kind:'repair',at,side,amount:8,text:`${label(at)}: surlar +8`});}
   else if(o.type==='repair'){g.players[side].wall=Math.min((g.players[side].wallLevel??1)*8,(g.players[side].wall??0)+6);g.players[side].hp=Math.min(20,g.players[side].hp+3);g.players[side].breaches=[];g.players[side].wallDamageByApproach={};const restored=heal(forces[at],3);log.push(`${sideName(side)}: sur +6, kale +3 (en fazla 20), yaralılara toplam +${restored} can; gedikler kapatıldı.`);event({phase:'prepare',kind:'repair',at,side,amount:restored,text:`${label(at)}: onarım ve yaralı tedavisi`});}
   else{
@@ -159,7 +173,7 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
     log.push(`${sideName(side)}: Şahi bataryası ${g.turn+2}. tur yeniden ateş edebilir.`);
    }
   }
-  for(const s of g.sieges??[]){const f=map[s.from];if(!f||g.regions[s.from].owner!==s.side||g.regions[s.to].owner===s.side||!count(f.army))continue;const d=distance(s.from,s.to);if(d>(f.army.kusatma?2:1))continue;const enemy=castleSide(s.to)!;
+  for(const s of g.sieges??[]){if(orders[s.side].some(o=>o.type==='rally'&&o.at===s.from))continue;const f=map[s.from];if(!f||g.regions[s.from].owner!==s.side||g.regions[s.to].owner===s.side||!count(f.army))continue;const d=distance(s.from,s.to);if(d>(f.army.kusatma?2:1))continue;const enemy=castleSide(s.to)!;
    if(phase==='fast'&&d===1){if(!orders[s.side].some(o=>o.type==='fire'&&o.from===s.from&&o.unit==='okcu'))shot(s.side,s.from,s.to,armyBonus(f,rangedAttack(f,'okcu',3)),'fire');damage[s.from]=(damage[s.from]??0)+2+attack(map[s.to],'okcu',2);}
    if(phase==='heavy'){const n=(orders[s.side].some(o=>o.type==='fire'&&o.from===s.from&&o.unit==='kusatma')?0:rangedAttack(f,'kusatma',6))+(d===1?Math.max(0,rangedAttack(f,'piyade',1)-(g.players[enemy].breaches?.includes(s.from)?0:2)):0);if(g.players[enemy].breaches?.includes(s.from))castleDamage[enemy]+=n;else wallDamage[enemy]+=n;g.lastShots!.push({side:s.side,from:s.from,to:s.to,damage:n,kind:'siege'});event({phase:'heavy',kind:f.army.kusatma?'stone':'melee',unit:f.army.kusatma?'kusatma':'piyade',side:s.side,from:s.from,to:s.to,amount:n,text:`${label(s.from)} → ${label(s.to)} · kuşatma ${n} hasar`});log.push(`${sideName(s.side)}: ${label(s.to)} kuşatması, ${n} sur/kale hasarı.`);}
   }
@@ -201,8 +215,8 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
  updateCommanders(original,g,log,event);
  resolveCaravanOrders(original,g,orders,log,event);
  const active=new Set<RegionId>();const incoming=new Set<RegionId>();
- for(const side of [0,1] as Side[])for(const o of orders[side]){if('from' in o){active.add(o.from);if('to' in o)incoming.add(o.to);}if(o.type==='repair'||o.type==='recruit')active.add(o.at);}
- for(const siege of g.sieges){active.add(siege.from);incoming.add(siege.to);}
+ for(const side of [0,1] as Side[])for(const o of orders[side]){if('from' in o){active.add(o.from);if('to' in o)incoming.add(o.to);}if(o.type==='repair'||o.type==='recruit'||o.type==='rally')active.add(o.at);}
+ for(const siege of g.sieges){active.add(siege.from);if(!orders[siege.side].some(o=>o.type==='rally'&&o.at===siege.from))incoming.add(siege.to);}
  for(const r of REGIONS){const t=g.regions[r.id];if(t.owner===null||t.owner!==original.regions[r.id].owner||active.has(r.id)||incoming.has(r.id)||g.players[t.owner].hp===0)continue;
   const f=force(t);const max=UNIT_KEYS.reduce((n,u)=>n+f.army[u]*STRATEGY_UNITS[u].hp,0);
   const wounded=UNIT_KEYS.reduce((n,u)=>n+f.health[u].filter(hp=>hp<STRATEGY_UNITS[u].hp).length,0);const food=Math.ceil(wounded/4);

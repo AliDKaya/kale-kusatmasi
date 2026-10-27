@@ -9,8 +9,23 @@
     "No immediate castle wall or bank resource changes",
     "Full repair, insufficient resources, four-order cap and ready-lock show disabled reason",
     "375px document width = 375; no outside-map horizontal overflow",
-    "Information, drag, pin and resize controls do not submit orders"
+    "Information, drag, pin and resize controls do not submit orders",
+    "Son Direnis button queues a validated rally order; short rally overlay visible with motion enabled; no instant client-side heal"
   ],
-  "productionCheck": "Pending final live smoke",
-  "pointChanges": 0
+  "productionCheck": {
+    "url": "https://kale-kusatmasi.vercel.app",
+    "commit": "ea5965c",
+    "result": "Passed desktop and 375px browser smoke with mocked game API; real auth/player/score mutations intercepted"
+  },
+  "pointChanges": 0,
+  "localGameRules": {
+    "testsPassed": 114,
+    "rallyTotalHealCap": 4,
+    "rallyCost": {
+      "gold": 2,
+      "grain": 2
+    },
+    "usesPerSidePerMatch": 1,
+    "legacyLogisticsAndCommandRevision1Preserved": true
+  }
 }

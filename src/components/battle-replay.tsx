@@ -6,7 +6,7 @@ import {STRATEGY_KEYS,STRATEGY_UNITS} from '@/lib/strategy';
 const PHASES=[['prepare','Hazırlık ve onarım',900],['fast','Okçu atışları · öncelik 3',1100],['march','Ordular ilerliyor',1300],['melee','Yakın dövüş · öncelik 2',1600],['heavy','Ağır silahlar · öncelik 1',1900],['aftermath','Kayıplar, gedikler ve tedavi',1500]] as const;
 const portrait=(u:Unit)=>`/images/${u==='sahi'?'sahi.webp':`${u}.jpg`}`;
 export default function BattleReplay({game,onSound,children,positions}:{positions?:{id:RegionId;x:number;y:number}[];game:Game|null|undefined;onSound:(events:BattleEvent[])=>void;children:(overlay:ReactNode)=>ReactNode}){
- const [step,setStep]=useState(-1),[play,setPlay]=useState(0);const events=game?.replay??[];const key=events.map(e=>e.id).join('|');const stages=PHASES.filter(([phase])=>events.some(e=>e.phase===phase));
+ const [step,setStep]=useState(-1),[play,setPlay]=useState(0);const events=game?.replay??[];const key=events.map(e=>e.id).join('|');const stages=PHASES.filter(([phase])=>events.some(e=>e.phase===phase)).map(([phase,title,duration])=>[phase,phase==='prepare'&&events.some(e=>e.kind==='rally')?'Son Direniş ve hazırlık':title,phase==='prepare'&&events.some(e=>e.kind==='rally')?1600:duration] as const);
  useEffect(()=>{
   if(!key)return;let elapsed=0;const timers:ReturnType<typeof setTimeout>[]=[];
   for(let i=0;i<stages.length;i++){const index=i;timers.push(setTimeout(()=>setStep(index),elapsed));elapsed+=stages[i][2];}
@@ -27,6 +27,7 @@ export default function BattleReplay({game,onSound,children,positions}:{position
    if(e.kind==='melee')return <div key={e.id} style={styleAt(e)} className={`combat-melee ${e.fieldBattle?'field-battle':''}`}><div><img src={portrait('piyade')} alt=""/><b>⚔</b><img src={portrait('piyade')} alt=""/></div><strong>{e.fieldBattle?'MEYDAN SAVAŞI':'YAKIN DÖVÜŞ'}</strong></div>;
    if(e.kind==='impact')return <div key={e.id} style={{...styleAt(e),marginLeft:(visible.filter(x=>x.kind==='impact'&&x.at===e.at).findIndex(x=>x.id===e.id)-.5)*44}} className="combat-hit"><span>−{e.amount??0}</span><small>{e.text.includes('sur')?'SUR':e.text.includes('kale canı')?'KALE':'ORDU CANI'}</small></div>;
    if(e.kind==='death')return <div key={e.id} style={styleAt(e)} className="combat-loss">{STRATEGY_KEYS.filter(u=>(e.army?.[u]??0)>0).map(u=><span key={u}><img src={portrait(u)} alt=""/>−{e.army?.[u]}</span>)}</div>;
+   if(e.kind==='rally')return <div key={e.id} style={styleAt(e)} className={`combat-rally side-${e.side??0}`}><b>⚑</b><span>SON DİRENİŞ</span><small>+{e.amount} CAN</small></div>;
    if(e.kind==='commander')return <div key={e.id} style={styleAt(e)} className={`combat-commander side-${e.side??0}`}><b>★</b><span>{e.at?'MAREŞAL YETİŞTİ':'MAREŞAL DÜŞTÜ'}</span></div>;
    if(e.kind==='capture')return <div key={e.id} style={styleAt(e)} className={`combat-flag side-${e.side??0}`}><b>⚑</b><span>{e.side===0?'BATI':'DOĞU'} ELE GEÇİRDİ</span></div>;
    if(e.kind==='breach')return <div key={e.id} style={styleAt(e)} className="combat-breach"><b>ϟ</b><span>GEDİK AÇILDI</span></div>;

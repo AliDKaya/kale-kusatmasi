@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {initialGame,resolveTurn,beginRound,validateOrders,type Game,type RegionId,type Side,type Order} from '../src/lib/game';
-import {planCaravanRoute,caravanEdge,nearCaravan,type Caravan} from '../src/lib/logistics';
+import {planCaravanRoute,caravanEdge,nearCaravan,raidLoss,resolveCaravanOrders,type Caravan} from '../src/lib/logistics';
 import {resourceTotal,RESOURCE_KEYS,type Resources} from '../src/lib/resources';
 import {regionIncome} from '../src/lib/strategy';
 import {STRATEGY_REGIONS} from '../src/lib/strategy-map';
@@ -13,7 +13,7 @@ const next=(g:Game)=>beginRound(g,new Date(g.reviewUntil!).getTime()+1);
 function caravan(g:Game,cargo:Resources={gold:4,wood:10,stone:8,grain:6}):Caravan{own(g,'C',0);own(g,'H',0);const c:Caravan={id:'0:1',side:0,route:['C','H','A'],edge:0,cargo,status:'road',protectedUntil:0,traded:false};g.logistics!.caravans[0]=c;g.logistics!.serial[0]=1;return c;}
 function total(g:Game){return g.players.reduce((n,p)=>n+RESOURCE_KEYS.reduce((m,k)=>m+(p[k]??0),0),0)+Object.values(g.logistics!.depots).reduce((n,r)=>n+resourceTotal(r),0)+g.logistics!.caravans.reduce((n,c)=>n+(c?resourceTotal(c.cargo):0),0);}
 
-test('yalnız yeni büyük odada lojistik var; eski büyük odanın doğrudan geliri korunur',()=>{assert.equal(initialGame().logistics,undefined);assert.equal(game().logistics!.revision,1);let old=initialGame();own(old,'C',0);old=tick(old);assert.equal(old.players[0].stone,8);const g=game();own(g,'C',0);const n=tick(g);assert.equal(n.players[0].stone,5);assert.equal(n.logistics!.caravans[0]!.cargo.stone,3);});
+test('yalnız yeni büyük odada lojistik var; eski büyük odanın doğrudan geliri korunur',()=>{assert.equal(initialGame().logistics,undefined);assert.equal(game().logistics!.revision,2);let old=initialGame();own(old,'C',0);old=tick(old);assert.equal(old.players[0].stone,8);const g=game();own(g,'C',0);const n=tick(g);assert.equal(n.players[0].stone,5);assert.equal(n.logistics!.caravans[0]!.cargo.stone,3);});
 test('üretim kasaya anında eklenmez; kervan yol üstünde taşır ve bir kez teslim eder',()=>{const g=game();own(g,'C',0);let n=tick(g);const c=n.logistics!.caravans[0]!;assert.equal(c.status,'road');assert.deepEqual(c.route,['C','A']);assert.equal(n.players[0].gold,11);assert.equal(c.cargo.gold,2);n=tick(next(n));assert.equal(n.logistics!.caravans[0]!.status,'delivered');assert.equal(n.players[0].gold,14);assert.equal(resourceTotal(n.logistics!.caravans[0]!.cargo),0);const m=tick(next(n));assert.notEqual(m.logistics!.caravans[0]!.id,c.id);assert.equal(m.logistics!.caravans[0]!.status,'road');});
 test('bağlantısız depo kaybolmaz; eve kontrollü yol açılınca sefer başlar',()=>{const g=game();own(g,'K',0);const n=tick(g);assert.equal(n.logistics!.caravans[0],null);assert.equal(n.logistics!.depots.K.grain,4);own(n,'H',0);const connected=tick(next(n));const courier=connected.logistics!.caravans[0];assert.ok(courier);assert.ok(courier.route.every(id=>connected.regions[id].owner===0));});
 test('rota U dönüşü yapmaz, bir sapmayı aşmaz ve rastgele değildir',()=>{const g=game();for(const id of ['B','C','H','K','D','I'] as RegionId[])own(g,id,0);for(const id of ['B','C','H','K','D','I'] as RegionId[])g.logistics!.depots[id]={gold:2,wood:4,stone:3,grain:2};const a=planCaravanRoute(g,0)!,b=planCaravanRoute(g,0)!;assert.deepEqual(a,b);assert.equal(a[a.length-1],'A');assert.equal(new Set(a).size,a.length);assert.ok(a.length<=5);});
@@ -26,3 +26,15 @@ test('kapanan yol kervanı durdurur, yükü silmez; yol geri alınırsa ilerler'
 test('aynı başlangıçtan çözüm aynı; orijinal durum değişmez',()=>{const g=game();caravan(g);const before=structuredClone(g);const a=tick(g),b=tick(g);assert.deepEqual(a,b);assert.deepEqual(g,before);assert.throws(()=>tick(a));});
 test('15 tur üretim/depo/kargo/teslimat toplamında kaynak çoğaltılmaz veya kaybolmaz',()=>{let g=game();for(const r of STRATEGY_REGIONS)if(r.id!=='A'&&r.id!=='G')own(g,r.id,['E','F','L','M','I'].includes(r.id)?1:0);for(let i=0;i<15;i++){const before=total(g);const n=tick(g);const produced=STRATEGY_REGIONS.reduce((sum,r)=>sum+(n.regions[r.id].owner===null?0:resourceTotal(regionIncome(r.id,n.regions[r.id].level??1))),0);assert.equal(total(n)-before,produced);for(const c of n.logistics!.caravans)if(c&&c.status!=='delivered'){const [a,b]=caravanEdge(c);assert.ok(c.route.includes(a)&&c.route.includes(b));}g=next(n);}});
 test('kervan payload negatif miktarı, yabancı kaynağı ve istemci ganimetini reddeder',()=>{const base={action:'orders',operationId:crypto.randomUUID(),turn:1,ready:true};for(const order of [{type:'trade',from:'H',caravanId:'0:1',give:'wood',take:'stone',amount:-1},{type:'trade',from:'H',caravanId:'0:1',give:'wood',take:'coins',amount:1},{type:'raid',from:'K',caravanId:'0:1',loot:999}])assert.equal(actionSchema.safeParse({...base,orders:[order]}).success,false);});
+
+test('eşit depo ve mesafede rota tercihi taraflara göre aynalanır',()=>{const g=game();for(const [id,s] of [['B',0],['C',0],['F',1],['E',1]] as [RegionId,Side][]){own(g,id,s);g.logistics!.depots[id]={gold:2,wood:3,stone:0,grain:0};}const mirror:Partial<Record<RegionId,RegionId>>={A:'G',B:'F',C:'E'};assert.deepEqual(planCaravanRoute(g,0)?.map(id=>mirror[id]),planCaravanRoute(g,1));});
+
+test('küçük karışık yük baskını toplam bütçeye bağlıdır; kaynak türü sayısıyla katlanmaz',()=>{
+ for(let gold=0;gold<=7;gold++)for(let wood=0;wood<=7;wood++)for(let stone=0;stone<=7;stone++)for(let grain=0;grain<=7;grain++){
+  const cargo={gold,wood,stone,grain},before={...cargo},loss=raidLoss(cargo),total=resourceTotal(cargo);
+  assert.equal(resourceTotal(loss),total?Math.max(1,Math.floor(total/5)):0);for(const k of RESOURCE_KEYS)assert.ok(loss[k]>=0&&loss[k]<=cargo[k]);assert.deepEqual(cargo,before);
+ }
+});
+test('yeni odada dört kaynaklık kervan bir kayıp verir; eski oda eski baskın kuralını korur',()=>{
+ for(const revision of [1,2] as const){const g=game();g.logistics!.revision=revision;const c=caravan(g,{gold:1,wood:1,stone:1,grain:1});own(g,'K',1);const n=structuredClone(g);resolveCaravanOrders(g,n,[[],[{type:'raid',from:'K',caravanId:c.id}]],[],()=>{});assert.equal(resourceTotal(n.logistics!.caravans[0]!.cargo),revision===2?3:0);assert.equal(n.logistics!.caravans[0]!.protectedUntil,3);assert.equal(n.logistics!.caravans[0]!.delayedTurn,1);}
+});

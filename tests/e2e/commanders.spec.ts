@@ -10,7 +10,7 @@ test('mareşal: iki oyuncuda terfi, yerel bonus göstergesi ve ölüm sonrası b
  try{
  await p.goto(baseURL!);await p.getByLabel('TAKMA ADIN').fill(`TestJournalA${suffix}`);await p.getByRole('radio',{name:/Kuşatma Vadisi/}).check();await p.getByRole('button',{name:'Oda oluştur'}).click();await expect(p).toHaveURL(/\/room\/[A-Z2-9]{6}$/,{timeout:20000});const code=p.url().split('/').pop()!;
  await q.goto(baseURL!);await q.getByLabel('TAKMA ADIN').fill(`TestJournalB${suffix}`);await q.getByRole('button',{name:'Koda katıl',exact:true}).click();await q.getByLabel('ODA KODU').fill(code);await q.getByRole('button',{name:'Meydana katıl'}).click();await expect(q).toHaveURL(new RegExp(`/room/${code}$`),{timeout:20000});
- const initial=(await request(p,`/api/rooms/${code}`)).data;expect(initial.game.command.revision).toBe(1);
+ const initial=(await request(p,`/api/rooms/${code}`)).data;expect(initial.game.command.revision).toBe(2);
  const fixture=initialGame(Date.now(),false,true,true);fixture.turn=5;fixture.deadline=new Date(Date.now()+30000).toISOString();for(const v of fixture.regions.A.veterans!.piyade){v.age=3;v.battles=1;}
  fixture.regions.H=structuredClone(fixture.regions.G);fixture.regions.H.veterans!.piyade.forEach((v,i)=>{v.id=`H:p:${i}`;v.age=3;v.battles=1;});fixture.regions.H.veterans!.okcu.forEach(v=>v.id='H:archer');
  await sql`update rooms set state=${sql.json(fixture)},version=version+1 where id=${initial.id}`;await expect(p.locator('.turn-block')).toContainText('TUR 5',{timeout:15000});

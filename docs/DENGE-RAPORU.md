@@ -1,3 +1,5 @@
+> Arşiv: Bu rapor eski, kervansız ve mareşalsiz ölçümdür. Güncel sonuçlar ve uygulanan değişiklikler [DENGE-GUNCEL.md](DENGE-GUNCEL.md) içindedir.
+
 # Kuşatma Vadisi — ilk denge raporu
 
 27 Ekim 2026. Bu rapor kontrollü senaryolara dayanır; insan maçlarından kazanma oranı veya kusursuz denge iddiası değildir. Ham çıktı: `public/evidence/balance.json`. Tekrar üretme: `npx tsx scripts/balance.ts`. Veritabanına veya skor tablosuna kayıt yazmaz.

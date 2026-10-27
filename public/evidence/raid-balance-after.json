@@ -1,0 +1,77 @@
+{
+  "method": "Actual validateOrders and resolveCaravanOrders, isolated cargo fixtures; no production, bank income, network or scores",
+  "rows": [
+    {
+      "cargo": {
+        "gold": 1,
+        "wood": 1,
+        "stone": 1,
+        "grain": 1
+      },
+      "lost": {
+        "gold": 1,
+        "wood": 0,
+        "stone": 0,
+        "grain": 0
+      },
+      "lostTotal": 1,
+      "looted": 1,
+      "protectedUntil": 3,
+      "delayedTurn": 1
+    },
+    {
+      "cargo": {
+        "gold": 2,
+        "wood": 0,
+        "stone": 3,
+        "grain": 0
+      },
+      "lost": {
+        "gold": 0,
+        "wood": 0,
+        "stone": 1,
+        "grain": 0
+      },
+      "lostTotal": 1,
+      "looted": 1,
+      "protectedUntil": 3,
+      "delayedTurn": 1
+    },
+    {
+      "cargo": {
+        "gold": 4,
+        "wood": 10,
+        "stone": 8,
+        "grain": 6
+      },
+      "lost": {
+        "gold": 1,
+        "wood": 2,
+        "stone": 1,
+        "grain": 1
+      },
+      "lostTotal": 5,
+      "looted": 4,
+      "protectedUntil": 3,
+      "delayedTurn": 1
+    },
+    {
+      "cargo": {
+        "gold": 20,
+        "wood": 20,
+        "stone": 20,
+        "grain": 20
+      },
+      "lost": {
+        "gold": 4,
+        "wood": 4,
+        "stone": 4,
+        "grain": 4
+      },
+      "lostTotal": 16,
+      "looted": 4,
+      "protectedUntil": 3,
+      "delayedTurn": 1
+    }
+  ]
+}

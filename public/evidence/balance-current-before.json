@@ -1,0 +1,2745 @@
+{
+  "generatedAt": "2026-10-27T15:22:48.835Z",
+  "method": "36 deterministic bot matches (two maps, two symmetric opening states, both sides for unequal levels); fixed-board logistics and siege comparisons; exact-army marshal duels. No network, leaderboard or human win-rate claims.",
+  "matches": [
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        4,
+        6
+      ],
+      "regions": [
+        3,
+        4
+      ],
+      "bank": [
+        {
+          "gold": 37,
+          "wood": 22,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 44,
+          "wood": 32,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 16,
+        "recruit:okcu": 2
+      },
+      "events": 18,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 18,
+      "elapsedMs": 30
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 8,
+      "finishReason": "elimination",
+      "hp": [
+        18,
+        16
+      ],
+      "regions": [
+        0,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 26,
+          "wood": 30,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 32,
+          "wood": 10,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 15,
+        "recruit:okcu": 6,
+        "defend": 2
+      },
+      "events": 7,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 28
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        19,
+        6
+      ],
+      "regions": [
+        5,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 48,
+          "wood": 18,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 29,
+          "wood": 18,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 20,
+        "recruit:okcu": 3
+      },
+      "events": 11,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 35
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": "draw",
+      "turn": 10,
+      "finishReason": "castle",
+      "hp": [
+        0,
+        0
+      ],
+      "regions": [
+        1,
+        6
+      ],
+      "bank": [
+        {
+          "gold": 17,
+          "wood": 16,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 31,
+          "wood": 20,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 13,
+        "recruit:okcu": 14
+      },
+      "events": 17,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 27,
+      "elapsedMs": 63
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        19,
+        6
+      ],
+      "regions": [
+        5,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 48,
+          "wood": 18,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 29,
+          "wood": 18,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 20,
+        "recruit:okcu": 3
+      },
+      "events": 11,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 47
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 7,
+      "finishReason": "castle",
+      "hp": [
+        0,
+        7
+      ],
+      "regions": [
+        6,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 20,
+          "wood": 13,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 2,
+          "wood": 7,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 13,
+        "recruit:okcu": 11,
+        "defend": 1
+      },
+      "events": 14,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 25,
+      "elapsedMs": 25
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        7,
+        9
+      ],
+      "regions": [
+        6,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 17,
+          "wood": 20,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 25,
+          "wood": 16,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 23,
+        "recruit:okcu": 12,
+        "defend": 2
+      },
+      "events": 21,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 37,
+      "elapsedMs": 62
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 7,
+      "finishReason": "castle",
+      "hp": [
+        0,
+        7
+      ],
+      "regions": [
+        6,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 23,
+          "wood": 15,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 2,
+          "wood": 7,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 13,
+        "recruit:okcu": 10
+      },
+      "events": 14,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 37
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 10,
+      "finishReason": "castle",
+      "hp": [
+        16,
+        0
+      ],
+      "regions": [
+        1,
+        6
+      ],
+      "bank": [
+        {
+          "gold": 15,
+          "wood": 14,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 38,
+          "wood": 28,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 23,
+        "recruit:okcu": 11,
+        "defend": 2
+      },
+      "events": 20,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 36,
+      "elapsedMs": 79
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 8,
+      "finishReason": "castle",
+      "hp": [
+        0,
+        2
+      ],
+      "regions": [
+        5,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 32,
+          "wood": 24,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 18,
+          "wood": 20,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 8,
+        "recruit:okcu": 4
+      },
+      "events": 14,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 12,
+      "elapsedMs": 13
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 9,
+      "finishReason": "elimination",
+      "hp": [
+        15,
+        16
+      ],
+      "regions": [
+        0,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 25,
+          "wood": 23,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 30,
+          "wood": 25,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 16,
+        "recruit:okcu": 7
+      },
+      "events": 10,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 32
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 0,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        17,
+        15
+      ],
+      "regions": [
+        6,
+        1
+      ],
+      "bank": [
+        {
+          "gold": 40,
+          "wood": 22,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 22,
+          "wood": 34,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 18,
+        "recruit:okcu": 5,
+        "defend": 1
+      },
+      "events": 8,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 24,
+      "elapsedMs": 30
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "acemi",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 9,
+      "finishReason": "elimination",
+      "hp": [
+        15,
+        17
+      ],
+      "regions": [
+        0,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 21,
+          "wood": 19,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 22,
+          "wood": 27,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 17,
+        "recruit:okcu": 6
+      },
+      "events": 8,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 23,
+      "elapsedMs": 47
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        11,
+        14
+      ],
+      "regions": [
+        4,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 20,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 26,
+          "wood": 32,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 20,
+        "recruit:okcu": 4
+      },
+      "events": 12,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 24,
+      "elapsedMs": 46
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": "draw",
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        2,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 10,
+        "recruit:okcu": 4,
+        "recruit:piyade": 4
+      },
+      "events": 10,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 18,
+      "elapsedMs": 12
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "sancak",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": "draw",
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        2,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 10,
+        "recruit:okcu": 4,
+        "recruit:piyade": 4
+      },
+      "events": 10,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 18,
+      "elapsedMs": 17
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": "draw",
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        2,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 10,
+        "recruit:okcu": 4,
+        "recruit:piyade": 4
+      },
+      "events": 10,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 18,
+      "elapsedMs": 15
+    },
+    {
+      "mode": "classic",
+      "levels": [
+        "serdar",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": "draw",
+      "turn": 10,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        2,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        },
+        {
+          "gold": 3,
+          "wood": 26,
+          "stone": 0,
+          "grain": 0
+        }
+      ],
+      "types": {
+        "move": 10,
+        "recruit:okcu": 4,
+        "recruit:piyade": 4
+      },
+      "events": 10,
+      "marshals": 0,
+      "caravans": 0,
+      "totalDecisions": 18,
+      "elapsedMs": 20
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        7,
+        6
+      ],
+      "bank": [
+        {
+          "gold": 50,
+          "wood": 40,
+          "stone": 69,
+          "grain": 52
+        },
+        {
+          "gold": 40,
+          "wood": 47,
+          "stone": 29,
+          "grain": 62
+        }
+      ],
+      "types": {
+        "move": 30,
+        "recruit:piyade": 1
+      },
+      "events": 2,
+      "marshals": 0,
+      "caravans": 27,
+      "totalDecisions": 31,
+      "elapsedMs": 907
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        12,
+        20
+      ],
+      "regions": [
+        4,
+        9
+      ],
+      "bank": [
+        {
+          "gold": 33,
+          "wood": 14,
+          "stone": 50,
+          "grain": 29
+        },
+        {
+          "gold": 15,
+          "wood": 18,
+          "stone": 89,
+          "grain": 56
+        }
+      ],
+      "types": {
+        "move": 32,
+        "recruit:piyade": 16,
+        "upgrade": 2,
+        "raid": 4,
+        "defend": 13,
+        "fire": 2,
+        "siege": 1,
+        "repair": 1
+      },
+      "events": 29,
+      "marshals": 1,
+      "caravans": 22,
+      "totalDecisions": 71,
+      "elapsedMs": 3313
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        6,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 11,
+          "wood": 54,
+          "stone": 63,
+          "grain": 45
+        },
+        {
+          "gold": 31,
+          "wood": 44,
+          "stone": 58,
+          "grain": 64
+        }
+      ],
+      "types": {
+        "move": 27,
+        "recruit:piyade": 19,
+        "upgrade": 1,
+        "raid": 4,
+        "fire": 4,
+        "defend": 20
+      },
+      "events": 21,
+      "marshals": 2,
+      "caravans": 26,
+      "totalDecisions": 75,
+      "elapsedMs": 4309
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        17,
+        20
+      ],
+      "regions": [
+        2,
+        11
+      ],
+      "bank": [
+        {
+          "gold": 31,
+          "wood": 15,
+          "stone": 63,
+          "grain": 6
+        },
+        {
+          "gold": 29,
+          "wood": 1,
+          "stone": 90,
+          "grain": 90
+        }
+      ],
+      "types": {
+        "move": 34,
+        "recruit:piyade": 16,
+        "upgrade": 1,
+        "raid": 2,
+        "defend": 5,
+        "fire": 3,
+        "siege": 2,
+        "cancel": 1,
+        "repair": 1
+      },
+      "events": 33,
+      "marshals": 4,
+      "caravans": 23,
+      "totalDecisions": 65,
+      "elapsedMs": 6850
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "acemi"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        10,
+        3
+      ],
+      "bank": [
+        {
+          "gold": 9,
+          "wood": 46,
+          "stone": 68,
+          "grain": 51
+        },
+        {
+          "gold": 31,
+          "wood": 44,
+          "stone": 63,
+          "grain": 62
+        }
+      ],
+      "types": {
+        "move": 28,
+        "recruit:piyade": 20,
+        "upgrade": 1,
+        "raid": 2,
+        "fire": 6,
+        "defend": 9
+      },
+      "events": 34,
+      "marshals": 3,
+      "caravans": 27,
+      "totalDecisions": 66,
+      "elapsedMs": 7124
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        4,
+        9
+      ],
+      "bank": [
+        {
+          "gold": 23,
+          "wood": 12,
+          "stone": 60,
+          "grain": 50
+        },
+        {
+          "gold": 5,
+          "wood": 1,
+          "stone": 52,
+          "grain": 72
+        }
+      ],
+      "types": {
+        "move": 50,
+        "recruit:piyade": 23,
+        "upgrade": 2,
+        "defend": 30,
+        "raid": 7,
+        "fire": 5
+      },
+      "events": 39,
+      "marshals": 2,
+      "caravans": 22,
+      "totalDecisions": 117,
+      "elapsedMs": 5558
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        6,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 2,
+          "wood": 40,
+          "stone": 35,
+          "grain": 35
+        },
+        {
+          "gold": 7,
+          "wood": 2,
+          "stone": 50,
+          "grain": 72
+        }
+      ],
+      "types": {
+        "move": 54,
+        "recruit:piyade": 24,
+        "upgrade": 2,
+        "defend": 16,
+        "raid": 7,
+        "fire": 6
+      },
+      "events": 45,
+      "marshals": 3,
+      "caravans": 22,
+      "totalDecisions": 109,
+      "elapsedMs": 11131
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "sancak"
+      ],
+      "opening": 0,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        7,
+        6
+      ],
+      "bank": [
+        {
+          "gold": 38,
+          "wood": 11,
+          "stone": 73,
+          "grain": 81
+        },
+        {
+          "gold": 2,
+          "wood": 9,
+          "stone": 35,
+          "grain": 21
+        }
+      ],
+      "types": {
+        "move": 60,
+        "recruit:piyade": 20,
+        "upgrade": 2,
+        "defend": 15,
+        "raid": 7,
+        "fire": 9
+      },
+      "events": 65,
+      "marshals": 2,
+      "caravans": 21,
+      "totalDecisions": 113,
+      "elapsedMs": 10528
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "serdar"
+      ],
+      "opening": 0,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        5,
+        8
+      ],
+      "bank": [
+        {
+          "gold": 8,
+          "wood": 45,
+          "stone": 36,
+          "grain": 41
+        },
+        {
+          "gold": 5,
+          "wood": 1,
+          "stone": 75,
+          "grain": 39
+        }
+      ],
+      "types": {
+        "move": 60,
+        "recruit:piyade": 24,
+        "upgrade": 2,
+        "defend": 8,
+        "raid": 5,
+        "fire": 5
+      },
+      "events": 42,
+      "marshals": 2,
+      "caravans": 23,
+      "totalDecisions": 104,
+      "elapsedMs": 12672
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        6,
+        5
+      ],
+      "bank": [
+        {
+          "gold": 49,
+          "wood": 23,
+          "stone": 35,
+          "grain": 79
+        },
+        {
+          "gold": 53,
+          "wood": 23,
+          "stone": 48,
+          "grain": 90
+        }
+      ],
+      "types": {
+        "move": 29
+      },
+      "events": 2,
+      "marshals": 0,
+      "caravans": 22,
+      "totalDecisions": 29,
+      "elapsedMs": 1874
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        3,
+        10
+      ],
+      "bank": [
+        {
+          "gold": 31,
+          "wood": 19,
+          "stone": 51,
+          "grain": 18
+        },
+        {
+          "gold": 4,
+          "wood": 68,
+          "stone": 28,
+          "grain": 90
+        }
+      ],
+      "types": {
+        "move": 37,
+        "recruit:piyade": 15,
+        "upgrade": 1,
+        "defend": 11,
+        "raid": 3,
+        "fire": 2
+      },
+      "events": 19,
+      "marshals": 2,
+      "caravans": 22,
+      "totalDecisions": 69,
+      "elapsedMs": 5246
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        10
+      ],
+      "regions": [
+        10,
+        3
+      ],
+      "bank": [
+        {
+          "gold": 2,
+          "wood": 25,
+          "stone": 57,
+          "grain": 30
+        },
+        {
+          "gold": 41,
+          "wood": 27,
+          "stone": 60,
+          "grain": 29
+        }
+      ],
+      "types": {
+        "move": 31,
+        "recruit:piyade": 19,
+        "upgrade": 2,
+        "defend": 9,
+        "raid": 4,
+        "siege": 1,
+        "repair": 1
+      },
+      "events": 27,
+      "marshals": 2,
+      "caravans": 23,
+      "totalDecisions": 67,
+      "elapsedMs": 5041
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "acemi",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        2,
+        11
+      ],
+      "bank": [
+        {
+          "gold": 24,
+          "wood": 15,
+          "stone": 63,
+          "grain": 14
+        },
+        {
+          "gold": 5,
+          "wood": 68,
+          "stone": 29,
+          "grain": 95
+        }
+      ],
+      "types": {
+        "move": 27,
+        "recruit:piyade": 17,
+        "upgrade": 1,
+        "defend": 9,
+        "raid": 5,
+        "fire": 7
+      },
+      "events": 25,
+      "marshals": 2,
+      "caravans": 23,
+      "totalDecisions": 66,
+      "elapsedMs": 10039
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "acemi"
+      ],
+      "opening": 1,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        11,
+        2
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 39,
+          "stone": 33,
+          "grain": 61
+        },
+        {
+          "gold": 15,
+          "wood": 13,
+          "stone": 51,
+          "grain": 17
+        }
+      ],
+      "types": {
+        "move": 30,
+        "recruit:piyade": 21,
+        "upgrade": 1,
+        "defend": 3,
+        "raid": 4,
+        "fire": 6
+      },
+      "events": 17,
+      "marshals": 2,
+      "caravans": 24,
+      "totalDecisions": 65,
+      "elapsedMs": 10844
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        6,
+        7
+      ],
+      "bank": [
+        {
+          "gold": 3,
+          "wood": 34,
+          "stone": 29,
+          "grain": 50
+        },
+        {
+          "gold": 2,
+          "wood": 32,
+          "stone": 25,
+          "grain": 78
+        }
+      ],
+      "types": {
+        "move": 55,
+        "recruit:piyade": 24,
+        "upgrade": 2,
+        "defend": 17,
+        "fire": 3,
+        "raid": 5
+      },
+      "events": 45,
+      "marshals": 2,
+      "caravans": 23,
+      "totalDecisions": 106,
+      "elapsedMs": 5817
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "sancak",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        4,
+        9
+      ],
+      "bank": [
+        {
+          "gold": 2,
+          "wood": 34,
+          "stone": 29,
+          "grain": 49
+        },
+        {
+          "gold": 18,
+          "wood": 1,
+          "stone": 55,
+          "grain": 68
+        }
+      ],
+      "types": {
+        "move": 57,
+        "recruit:piyade": 24,
+        "upgrade": 2,
+        "defend": 15,
+        "fire": 3,
+        "raid": 4
+      },
+      "events": 54,
+      "marshals": 3,
+      "caravans": 23,
+      "totalDecisions": 105,
+      "elapsedMs": 6043
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "sancak"
+      ],
+      "opening": 1,
+      "winner": 0,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        7,
+        6
+      ],
+      "bank": [
+        {
+          "gold": 16,
+          "wood": 17,
+          "stone": 55,
+          "grain": 65
+        },
+        {
+          "gold": 33,
+          "wood": 6,
+          "stone": 64,
+          "grain": 69
+        }
+      ],
+      "types": {
+        "move": 62,
+        "recruit:piyade": 22,
+        "upgrade": 2,
+        "defend": 15,
+        "raid": 5,
+        "fire": 3
+      },
+      "events": 48,
+      "marshals": 3,
+      "caravans": 22,
+      "totalDecisions": 109,
+      "elapsedMs": 6627
+    },
+    {
+      "mode": "strategy",
+      "levels": [
+        "serdar",
+        "serdar"
+      ],
+      "opening": 1,
+      "winner": 1,
+      "turn": 16,
+      "finishReason": "turn-limit",
+      "hp": [
+        20,
+        20
+      ],
+      "regions": [
+        4,
+        9
+      ],
+      "bank": [
+        {
+          "gold": 10,
+          "wood": 16,
+          "stone": 60,
+          "grain": 65
+        },
+        {
+          "gold": 33,
+          "wood": 2,
+          "stone": 72,
+          "grain": 72
+        }
+      ],
+      "types": {
+        "move": 61,
+        "recruit:piyade": 25,
+        "upgrade": 2,
+        "defend": 6,
+        "raid": 4,
+        "fire": 5
+      },
+      "events": 58,
+      "marshals": 2,
+      "caravans": 24,
+      "totalDecisions": 103,
+      "elapsedMs": 8670
+    }
+  ],
+  "economy": [
+    {
+      "logistics": false,
+      "produced": 688,
+      "bankShareOfProduced": 1,
+      "history": [
+        {
+          "turn": 2,
+          "bank": [
+            {
+              "gold": 15,
+              "wood": 12,
+              "stone": 8,
+              "grain": 15
+            },
+            {
+              "gold": 15,
+              "wood": 12,
+              "stone": 8,
+              "grain": 15
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 3,
+          "bank": [
+            {
+              "gold": 20,
+              "wood": 17,
+              "stone": 13,
+              "grain": 26
+            },
+            {
+              "gold": 20,
+              "wood": 17,
+              "stone": 13,
+              "grain": 26
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 4,
+          "bank": [
+            {
+              "gold": 25,
+              "wood": 22,
+              "stone": 18,
+              "grain": 37
+            },
+            {
+              "gold": 25,
+              "wood": 22,
+              "stone": 18,
+              "grain": 37
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 5,
+          "bank": [
+            {
+              "gold": 30,
+              "wood": 28,
+              "stone": 24,
+              "grain": 50
+            },
+            {
+              "gold": 30,
+              "wood": 28,
+              "stone": 24,
+              "grain": 50
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 6,
+          "bank": [
+            {
+              "gold": 35,
+              "wood": 34,
+              "stone": 30,
+              "grain": 63
+            },
+            {
+              "gold": 35,
+              "wood": 34,
+              "stone": 30,
+              "grain": 63
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 7,
+          "bank": [
+            {
+              "gold": 40,
+              "wood": 40,
+              "stone": 36,
+              "grain": 76
+            },
+            {
+              "gold": 40,
+              "wood": 40,
+              "stone": 36,
+              "grain": 76
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 8,
+          "bank": [
+            {
+              "gold": 45,
+              "wood": 46,
+              "stone": 42,
+              "grain": 89
+            },
+            {
+              "gold": 45,
+              "wood": 46,
+              "stone": 42,
+              "grain": 89
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 9,
+          "bank": [
+            {
+              "gold": 50,
+              "wood": 52,
+              "stone": 48,
+              "grain": 102
+            },
+            {
+              "gold": 50,
+              "wood": 52,
+              "stone": 48,
+              "grain": 102
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 10,
+          "bank": [
+            {
+              "gold": 55,
+              "wood": 58,
+              "stone": 54,
+              "grain": 115
+            },
+            {
+              "gold": 55,
+              "wood": 58,
+              "stone": 54,
+              "grain": 115
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 11,
+          "bank": [
+            {
+              "gold": 60,
+              "wood": 64,
+              "stone": 60,
+              "grain": 128
+            },
+            {
+              "gold": 60,
+              "wood": 64,
+              "stone": 60,
+              "grain": 128
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 12,
+          "bank": [
+            {
+              "gold": 65,
+              "wood": 70,
+              "stone": 66,
+              "grain": 141
+            },
+            {
+              "gold": 65,
+              "wood": 70,
+              "stone": 66,
+              "grain": 141
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        },
+        {
+          "turn": 13,
+          "bank": [
+            {
+              "gold": 70,
+              "wood": 76,
+              "stone": 72,
+              "grain": 154
+            },
+            {
+              "gold": 70,
+              "wood": 76,
+              "stone": 72,
+              "grain": 154
+            }
+          ],
+          "depots": 0,
+          "cargo": [],
+          "delivered": []
+        }
+      ]
+    },
+    {
+      "logistics": true,
+      "produced": 688,
+      "bankShareOfProduced": 0.8052325581395349,
+      "history": [
+        {
+          "turn": 2,
+          "bank": [
+            {
+              "gold": 11,
+              "wood": 9,
+              "stone": 5,
+              "grain": 7
+            },
+            {
+              "gold": 11,
+              "wood": 9,
+              "stone": 5,
+              "grain": 7
+            }
+          ],
+          "depots": 26,
+          "cargo": [
+            5,
+            5
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 3,
+          "bank": [
+            {
+              "gold": 12,
+              "wood": 10,
+              "stone": 6,
+              "grain": 8
+            },
+            {
+              "gold": 12,
+              "wood": 10,
+              "stone": 6,
+              "grain": 8
+            }
+          ],
+          "depots": 48,
+          "cargo": [
+            16,
+            16
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 4,
+          "bank": [
+            {
+              "gold": 13,
+              "wood": 11,
+              "stone": 7,
+              "grain": 9
+            },
+            {
+              "gold": 13,
+              "wood": 11,
+              "stone": 7,
+              "grain": 9
+            }
+          ],
+          "depots": 58,
+          "cargo": [
+            33,
+            33
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 5,
+          "bank": [
+            {
+              "gold": 23,
+              "wood": 12,
+              "stone": 19,
+              "grain": 23
+            },
+            {
+              "gold": 23,
+              "wood": 12,
+              "stone": 19,
+              "grain": 23
+            }
+          ],
+          "depots": 110,
+          "cargo": [
+            0,
+            0
+          ],
+          "delivered": [
+            true,
+            true
+          ]
+        },
+        {
+          "turn": 6,
+          "bank": [
+            {
+              "gold": 24,
+              "wood": 13,
+              "stone": 20,
+              "grain": 24
+            },
+            {
+              "gold": 24,
+              "wood": 13,
+              "stone": 20,
+              "grain": 24
+            }
+          ],
+          "depots": 110,
+          "cargo": [
+            26,
+            26
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 7,
+          "bank": [
+            {
+              "gold": 25,
+              "wood": 14,
+              "stone": 21,
+              "grain": 25
+            },
+            {
+              "gold": 25,
+              "wood": 14,
+              "stone": 21,
+              "grain": 25
+            }
+          ],
+          "depots": 108,
+          "cargo": [
+            53,
+            53
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 8,
+          "bank": [
+            {
+              "gold": 26,
+              "wood": 15,
+              "stone": 22,
+              "grain": 26
+            },
+            {
+              "gold": 26,
+              "wood": 15,
+              "stone": 22,
+              "grain": 26
+            }
+          ],
+          "depots": 98,
+          "cargo": [
+            84,
+            84
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 9,
+          "bank": [
+            {
+              "gold": 35,
+              "wood": 47,
+              "stone": 23,
+              "grain": 72
+            },
+            {
+              "gold": 35,
+              "wood": 47,
+              "stone": 23,
+              "grain": 72
+            }
+          ],
+          "depots": 150,
+          "cargo": [
+            0,
+            0
+          ],
+          "delivered": [
+            true,
+            true
+          ]
+        },
+        {
+          "turn": 10,
+          "bank": [
+            {
+              "gold": 36,
+              "wood": 48,
+              "stone": 24,
+              "grain": 73
+            },
+            {
+              "gold": 36,
+              "wood": 48,
+              "stone": 24,
+              "grain": 73
+            }
+          ],
+          "depots": 146,
+          "cargo": [
+            28,
+            28
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 11,
+          "bank": [
+            {
+              "gold": 37,
+              "wood": 49,
+              "stone": 25,
+              "grain": 74
+            },
+            {
+              "gold": 37,
+              "wood": 49,
+              "stone": 25,
+              "grain": 74
+            }
+          ],
+          "depots": 142,
+          "cargo": [
+            56,
+            56
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 12,
+          "bank": [
+            {
+              "gold": 38,
+              "wood": 50,
+              "stone": 26,
+              "grain": 75
+            },
+            {
+              "gold": 38,
+              "wood": 50,
+              "stone": 26,
+              "grain": 75
+            }
+          ],
+          "depots": 82,
+          "cargo": [
+            112,
+            112
+          ],
+          "delivered": [
+            false,
+            false
+          ]
+        },
+        {
+          "turn": 13,
+          "bank": [
+            {
+              "gold": 63,
+              "wood": 51,
+              "stone": 67,
+              "grain": 124
+            },
+            {
+              "gold": 63,
+              "wood": 51,
+              "stone": 67,
+              "grain": 124
+            }
+          ],
+          "depots": 134,
+          "cargo": [
+            0,
+            0
+          ],
+          "delivered": [
+            true,
+            true
+          ]
+        }
+      ]
+    }
+  ],
+  "siege": [
+    {
+      "engines": 1,
+      "logistics": false,
+      "repairs": 15,
+      "shots": 16,
+      "hp": 20,
+      "winner": 1,
+      "finishReason": "turn-limit",
+      "history": [
+        {
+          "turn": 2,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 14,
+            "wood": 12,
+            "stone": 8,
+            "grain": 11
+          }
+        },
+        {
+          "turn": 3,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 18,
+            "wood": 15,
+            "stone": 10,
+            "grain": 15
+          }
+        },
+        {
+          "turn": 4,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 22,
+            "wood": 18,
+            "stone": 12,
+            "grain": 19
+          }
+        },
+        {
+          "turn": 5,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 26,
+            "wood": 22,
+            "stone": 15,
+            "grain": 24
+          }
+        },
+        {
+          "turn": 6,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 30,
+            "wood": 26,
+            "stone": 18,
+            "grain": 29
+          }
+        },
+        {
+          "turn": 7,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 34,
+            "wood": 30,
+            "stone": 21,
+            "grain": 34
+          }
+        },
+        {
+          "turn": 8,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 38,
+            "wood": 34,
+            "stone": 24,
+            "grain": 39
+          }
+        },
+        {
+          "turn": 9,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 42,
+            "wood": 38,
+            "stone": 27,
+            "grain": 44
+          }
+        },
+        {
+          "turn": 10,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 46,
+            "wood": 42,
+            "stone": 30,
+            "grain": 49
+          }
+        },
+        {
+          "turn": 11,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 50,
+            "wood": 46,
+            "stone": 33,
+            "grain": 54
+          }
+        },
+        {
+          "turn": 12,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 54,
+            "wood": 50,
+            "stone": 36,
+            "grain": 59
+          }
+        },
+        {
+          "turn": 13,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 58,
+            "wood": 54,
+            "stone": 39,
+            "grain": 64
+          }
+        },
+        {
+          "turn": 14,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 62,
+            "wood": 58,
+            "stone": 42,
+            "grain": 69
+          }
+        },
+        {
+          "turn": 15,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 66,
+            "wood": 62,
+            "stone": 45,
+            "grain": 74
+          }
+        },
+        {
+          "turn": 16,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 70,
+            "wood": 66,
+            "stone": 48,
+            "grain": 79
+          }
+        },
+        {
+          "turn": 16,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 70,
+            "wood": 64,
+            "stone": 45,
+            "grain": 77
+          }
+        }
+      ]
+    },
+    {
+      "engines": 1,
+      "logistics": true,
+      "repairs": 14,
+      "shots": 16,
+      "hp": 20,
+      "winner": 1,
+      "finishReason": "turn-limit",
+      "history": [
+        {
+          "turn": 2,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 11,
+            "wood": 9,
+            "stone": 5,
+            "grain": 7
+          }
+        },
+        {
+          "turn": 3,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 12,
+            "wood": 8,
+            "stone": 3,
+            "grain": 6
+          }
+        },
+        {
+          "turn": 4,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 17,
+            "wood": 7,
+            "stone": 4,
+            "grain": 14
+          }
+        },
+        {
+          "turn": 5,
+          "hp": 20,
+          "wall": 2,
+          "bank": {
+            "gold": 18,
+            "wood": 6,
+            "stone": 2,
+            "grain": 13
+          }
+        },
+        {
+          "turn": 6,
+          "hp": 16,
+          "wall": 0,
+          "bank": {
+            "gold": 19,
+            "wood": 7,
+            "stone": 3,
+            "grain": 14
+          }
+        },
+        {
+          "turn": 7,
+          "hp": 19,
+          "wall": 0,
+          "bank": {
+            "gold": 29,
+            "wood": 6,
+            "stone": 14,
+            "grain": 30
+          }
+        },
+        {
+          "turn": 8,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 30,
+            "wood": 5,
+            "stone": 12,
+            "grain": 29
+          }
+        },
+        {
+          "turn": 9,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 31,
+            "wood": 4,
+            "stone": 10,
+            "grain": 28
+          }
+        },
+        {
+          "turn": 10,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 35,
+            "wood": 34,
+            "stone": 8,
+            "grain": 45
+          }
+        },
+        {
+          "turn": 11,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 36,
+            "wood": 33,
+            "stone": 6,
+            "grain": 44
+          }
+        },
+        {
+          "turn": 12,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 37,
+            "wood": 32,
+            "stone": 4,
+            "grain": 43
+          }
+        },
+        {
+          "turn": 13,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 53,
+            "wood": 31,
+            "stone": 32,
+            "grain": 60
+          }
+        },
+        {
+          "turn": 14,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 54,
+            "wood": 30,
+            "stone": 30,
+            "grain": 59
+          }
+        },
+        {
+          "turn": 15,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 55,
+            "wood": 29,
+            "stone": 28,
+            "grain": 58
+          }
+        },
+        {
+          "turn": 16,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 59,
+            "wood": 58,
+            "stone": 26,
+            "grain": 75
+          }
+        },
+        {
+          "turn": 16,
+          "hp": 20,
+          "wall": 0,
+          "bank": {
+            "gold": 59,
+            "wood": 56,
+            "stone": 23,
+            "grain": 73
+          }
+        }
+      ]
+    },
+    {
+      "engines": 2,
+      "logistics": false,
+      "repairs": 6,
+      "shots": 7,
+      "hp": 0,
+      "winner": 0,
+      "finishReason": "castle",
+      "history": [
+        {
+          "turn": 2,
+          "hp": 16,
+          "wall": 0,
+          "bank": {
+            "gold": 14,
+            "wood": 12,
+            "stone": 8,
+            "grain": 11
+          }
+        },
+        {
+          "turn": 3,
+          "hp": 13,
+          "wall": 0,
+          "bank": {
+            "gold": 18,
+            "wood": 15,
+            "stone": 10,
+            "grain": 15
+          }
+        },
+        {
+          "turn": 4,
+          "hp": 10,
+          "wall": 0,
+          "bank": {
+            "gold": 22,
+            "wood": 18,
+            "stone": 12,
+            "grain": 19
+          }
+        },
+        {
+          "turn": 5,
+          "hp": 7,
+          "wall": 0,
+          "bank": {
+            "gold": 26,
+            "wood": 22,
+            "stone": 15,
+            "grain": 24
+          }
+        },
+        {
+          "turn": 6,
+          "hp": 4,
+          "wall": 0,
+          "bank": {
+            "gold": 30,
+            "wood": 26,
+            "stone": 18,
+            "grain": 29
+          }
+        },
+        {
+          "turn": 7,
+          "hp": 1,
+          "wall": 0,
+          "bank": {
+            "gold": 34,
+            "wood": 30,
+            "stone": 21,
+            "grain": 34
+          }
+        },
+        {
+          "turn": 7,
+          "hp": 0,
+          "wall": 0,
+          "bank": {
+            "gold": 34,
+            "wood": 28,
+            "stone": 18,
+            "grain": 32
+          }
+        }
+      ]
+    },
+    {
+      "engines": 2,
+      "logistics": true,
+      "repairs": 3,
+      "shots": 5,
+      "hp": 0,
+      "winner": 0,
+      "finishReason": "castle",
+      "history": [
+        {
+          "turn": 2,
+          "hp": 16,
+          "wall": 0,
+          "bank": {
+            "gold": 11,
+            "wood": 9,
+            "stone": 5,
+            "grain": 7
+          }
+        },
+        {
+          "turn": 3,
+          "hp": 13,
+          "wall": 0,
+          "bank": {
+            "gold": 12,
+            "wood": 8,
+            "stone": 3,
+            "grain": 6
+          }
+        },
+        {
+          "turn": 4,
+          "hp": 10,
+          "wall": 0,
+          "bank": {
+            "gold": 17,
+            "wood": 7,
+            "stone": 4,
+            "grain": 14
+          }
+        },
+        {
+          "turn": 5,
+          "hp": 7,
+          "wall": 0,
+          "bank": {
+            "gold": 18,
+            "wood": 6,
+            "stone": 2,
+            "grain": 13
+          }
+        },
+        {
+          "turn": 5,
+          "hp": 0,
+          "wall": 0,
+          "bank": {
+            "gold": 18,
+            "wood": 6,
+            "stone": 2,
+            "grain": 13
+          }
+        }
+      ]
+    }
+  ],
+  "command": [
+    {
+      "size": 2,
+      "leader": false,
+      "attackerHp": 14,
+      "defenderHp": 14,
+      "marshalCount": 2
+    },
+    {
+      "size": 2,
+      "leader": true,
+      "attackerHp": 15,
+      "defenderHp": 13,
+      "marshalCount": 2
+    },
+    {
+      "size": 6,
+      "leader": false,
+      "attackerHp": 42,
+      "defenderHp": 42,
+      "marshalCount": 2
+    },
+    {
+      "size": 6,
+      "leader": true,
+      "attackerHp": 43,
+      "defenderHp": 41,
+      "marshalCount": 1
+    },
+    {
+      "size": 12,
+      "leader": false,
+      "attackerHp": 84,
+      "defenderHp": 84,
+      "marshalCount": 2
+    },
+    {
+      "size": 12,
+      "leader": true,
+      "attackerHp": 85,
+      "defenderHp": 83,
+      "marshalCount": 1
+    }
+  ],
+  "limitations": [
+    "Deterministic cases are correlated, not independent statistical samples",
+    "Opening states are symmetric and intentionally limited",
+    "Siege defender repairs but never counter-attacks; starting siege armies are supplied as fixtures, not purchased",
+    "No human playtesting or population win rates",
+    "Marshal duel isolates a one-turn exchange; no free healing or extra resources were added"
+  ]
+}

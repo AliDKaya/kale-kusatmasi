@@ -1,8 +1,8 @@
 import type {BattleEvent,Game,Side,Unit} from './game';
 export type Veteran={id:string;born:number;age:number;battles:number;marshal?:boolean};
-export type CommandState={revision:1;cooldownUntil:[number,number]};
+export type CommandState={revision:1|2;cooldownUntil:[number,number];rallyUsed?:[boolean,boolean]};
 const KEYS:Unit[]=['piyade','okcu','kusatma','sahi'];
-export const initialCommand=():CommandState=>({revision:1,cooldownUntil:[0,0]});
+export const initialCommand=():CommandState=>({revision:2,cooldownUntil:[0,0],rallyUsed:[false,false]});
 export function updateCommanders(original:Game,g:Game,log:string[],emit:(e:Omit<BattleEvent,'id'>)=>void){
  if(!g.command)return;
  const entries=(state:Game,side:Side)=>Object.entries(state.regions).filter(([,r])=>r.owner===side).flatMap(([at,r])=>KEYS.flatMap(unit=>(r.veterans?.[unit]??[]).map(v=>({at:at as keyof Game['regions'],unit,v}))));

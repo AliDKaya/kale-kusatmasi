@@ -7,6 +7,7 @@ import {Resource} from './icons';
 
 export type BattleMode=Unit|'move'|'defend'|'archer-fire'|'catapult-fire'|'siege'|'cannon'|'upgrade'|'repair'|'cancel'|'raid'|'trade';
 export function describeOrder(o:Order):{title:string;detail:string}{
+ if(o.type==='rally')return{title:'Son Direniş · maçta bir kez',detail:`${o.at} · yaşayan yaralılara toplam en fazla +4 can`};
  if(o.type==='raid')return{title:'Kervana baskın',detail:`${o.from} → ${o.caravanId}`};
  if(o.type==='trade')return{title:'Kervan takası',detail:`${o.amount*2} ${RESOURCE_NAMES[o.give]} → ${o.amount} ${RESOURCE_NAMES[o.take]}`};
  if(o.type==='recruit')return{title:`${o.quantity??1} × ${STRATEGY_UNITS[o.unit].name}`,detail:`${o.at} bölgesinde üretim`};

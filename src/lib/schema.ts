@@ -13,6 +13,7 @@ export const orderSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('cancel'), at:region }).strict(),
   z.object({ type: z.literal('upgrade'), at:region }).strict(),
   z.object({ type: z.literal('repair'), at:region }).strict(),
+  z.object({ type: z.literal('rally'), at:region }).strict(),
   z.object({ type:z.literal('raid'),from:region,caravanId:z.string().regex(/^[01]:[1-9]\d{0,3}$/) }).strict(),
   z.object({ type:z.literal('trade'),from:region,caravanId:z.string().regex(/^[01]:[1-9]\d{0,3}$/),give:z.enum(['gold','wood','stone','grain']),take:z.enum(['gold','wood','stone','grain']),amount:z.number().int().min(1).max(2) }).strict(),
 ]);

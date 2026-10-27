@@ -9,3 +9,14 @@ for(const mode of ['classic','strategy'] as const)for(const level of Object.keys
  }
 });
 test('bekleme ve sonuç aşamasında bot emir vermez',()=>{assert.deepEqual(planBot(initialGame(1000,true,true,true),1,'serdar'),[]);});
+
+for(const mode of ['classic','strategy'] as const)for(const level of Object.keys(BOT_LEVELS) as BotLevel[])test(`${mode}/${level}: eşit başlangıçta planlar iki taraf için aynalanır`,async()=>{
+ const {perspectiveRegion}=await import('../src/lib/map-symmetry');
+ let g=mode==='classic'?initialClassicGame(1000,false):initialGame(1000,false,true,true);
+ const normalized=(orders:ReturnType<typeof planBot>,side:Side)=>orders.map(o=>({...o,...('at'in o?{at:perspectiveRegion(o.at,side,mode==='strategy')}:{from:perspectiveRegion(o.from,side,mode==='strategy')}),...('to'in o?{to:perspectiveRegion(o.to,side,mode==='strategy')}:{}),...('caravanId'in o?{caravanId:o.caravanId.replace(/^[01](?=:)/,n=>Number(n)===side?'0':'1')}:{})}));
+ for(let round=0;round<(mode==='classic'?5:1)&&g.phase!=='finished';round++){
+  const a=planBot(g,0,level),b=planBot(g,1,level);assert.deepEqual(normalized(a,0),normalized(b,1),`${round+1}. turda taraf etkisi`);g=resolveTurn(g,[a,b],new Date(g.deadline).getTime()-1);if(g.phase==='review')g=beginRound(g,new Date(g.reviewUntil!).getTime()+1);
+ }
+});
+
+test('kaynağı ve piyade desteği olan Serdar yalnız piyade yığmak yerine menzilli rolü değerlendirir',()=>{const g=initialGame(1000,false,true,true);for(const p of g.players){p.gold=100;p.wood=100;p.stone=100;p.grain=100;}const orders=planBot(g,0,'serdar');validateOrders(g,0,orders);assert.ok(orders.some(o=>o.type==='recruit'&&o.unit!=='piyade'));});
