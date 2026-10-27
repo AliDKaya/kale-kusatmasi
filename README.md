@@ -44,3 +44,5 @@ Maden altın/taş, orman odun, köy tahıl üretir. Tutulan bölge iki tam turda
 Yeni Kuşatma Vadisi odalarında kervan ekonomisi vardır. Bölge üretimi depoda birikir; kendi yollarında ilerleyen kervan kaleye teslim ettiğinde harcanabilir. Yakındaki ordu baskın veya sınırlı 2’ye 1 yük takası yapabilir. Klasik ve eski açık büyük odalar önceki ekonomiyi korur. Kurallar/test kapsamı `docs/KERVAN-PLANI.md` içindedir.
 
 Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. Başlamayan maçta skor yazılmaz; başlamış maçta kapatmak teslim sayılır. Kapanış diğer oyuncuya canlı bildirilir, eski kodla katılım engellenir ve yeni oda açılabilir.
+
+Yeni büyük odalarda mareşal: aynı piyadenin 4 hayatta kalma + 2 çatışma turuyla terfisi, yerel ordu bonusu ve ölüm sonrası iki tur terfi beklemesi. Ayrıntı: `docs/MARESAL.md`. Otomatik toparlanma etkinliği ve bot antrenmanı henüz yoktur.

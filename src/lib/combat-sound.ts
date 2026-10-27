@@ -10,6 +10,7 @@ export function combatSound(ctx:AudioContext,events:BattleEvent[]):()=>void{
  for(const event of unique){
   if(event.kind==='caravan'){noise(.1,650,0,.2);tone(110,70,.12,0,'triangle',.15);}
   if(event.kind==='raid'){noise(.15,1800,0,.25);tone(160,70,.15,0,'triangle',.25);}
+  if(event.kind==='commander'){tone(220,220,.3,0,'triangle',.3);tone(330,330,.4,.15,'triangle',.2);}
   if(event.kind==='trade'){tone(620,620,.12,0,'sine',.2);tone(830,830,.15,.12,'sine',.2);}
   if(event.kind==='move'){const heavy=event.army?.kusatma||event.army?.sahi;for(let i=0;i<3;i++){noise(.07,heavy?450:900,i*.18,.25);tone(heavy?100:150,60,.07,i*.18,'triangle',.2);}}
   if(event.kind==='arrow'){tone(750,260,.09,0,'triangle',.35);noise(.18,6500,.04,.25);tone(180,60,.08,.5,'triangle',.25);}

@@ -57,7 +57,7 @@ export async function joinRoom(user: string, code: string, nickname: string) {
     await guardMutation(tx,user);
     if (members.length >= 2 || r.state) throw new ApiError('Bu oda dolu. Tam olarak iki oyuncu katılabilir.',409);
     await tx`insert into public.room_players (room_id,player_id,side,nickname) values (${r.id},${user},1,${nickname})`;
-    await tx`update public.rooms set state=${tx.json(r.mode==='strategy'?initialGame(Date.now(),true,true):initialClassicGame(Date.now(),true))},version=version+1 where id=${r.id}`;
+    await tx`update public.rooms set state=${tx.json(r.mode==='strategy'?initialGame(Date.now(),true,true,true):initialClassicGame(Date.now(),true))},version=version+1 where id=${r.id}`;
     return { code };
   });
 }

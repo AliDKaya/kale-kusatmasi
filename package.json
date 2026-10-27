@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx --test tests/game.test.ts tests/strategy.test.ts tests/logistics.test.ts",
+    "test": "tsx --test tests/game.test.ts tests/strategy.test.ts tests/logistics.test.ts tests/commanders.test.ts",
     "test:e2e": "playwright test",
     "check:setup": "node scripts/check-setup.mjs"
   },

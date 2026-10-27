@@ -1,0 +1,17 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {initialStrategyGame,armyHealth} from '../src/lib/strategy';
+import {resolveTurn,beginRound,type Game,type Side} from '../src/lib/game';
+import {updateCommanders} from '../src/lib/commanders';
+const game=()=>initialStrategyGame(1000,false,true,true);
+const leader=(g:Game,s:Side)=>Object.values(g.regions).filter(r=>r.owner===s).flatMap(r=>Object.values(r.veterans??{}).flat()).filter(v=>v.marshal);
+const tick=(g:Game)=>resolveTurn(g,[[],[]],new Date(g.deadline).getTime()-1);
+const next=(g:Game)=>beginRound(g,new Date(g.reviewUntil!).getTime()+1);
+const promote=(g:Game)=>{const n=structuredClone(g);updateCommanders(g,n,n.log,e=>n.replay!.push({...e,id:'test'}));return n;};
+test('mareşal yalnız açık kural sürümünde; iki tarafın asker kimlikleri benzersiz',()=>{assert.equal(initialStrategyGame(1000,false).command,undefined);const g=game();const ids=Object.values(g.regions).flatMap(r=>Object.values(r.veterans!).flat().map(v=>v.id));assert.equal(new Set(ids).size,ids.length);});
+test('beklemek tek başına mareşal üretmez',()=>{let g=game();for(let i=0;i<6;i++)g=next(tick(g));assert.equal(leader(g,0).length,0);assert.equal(leader(g,1).length,0);});
+test('dört hayatta kalma turu ve iki gerçek çatışma, taraf başına tek terfi; can üretmez',()=>{const g=game();g.replay=[];for(const v of g.regions.A.veterans!.piyade){v.age=3;v.battles=2;}const hp=armyHealth(g.regions.A);const n=promote(g);assert.equal(leader(n,0).length,1);assert.equal(armyHealth(n.regions.A),hp);assert.equal(leader(g,0).length,0);assert.equal(leader(promote(n),0).length,1);});
+test('mareşal taşınır, ordu bölünse de kopyalanmaz',()=>{let g=game();g.regions.A.veterans!.piyade[0].marshal=true;g=resolveTurn(g,[[{type:'move',from:'A',to:'H',army:{piyade:1,okcu:0,kusatma:0}}],[]],2000);assert.equal(leader(g,0).length,1);assert.equal(g.regions.H.veterans!.piyade[0].marshal,true);assert.equal(g.regions.A.veterans!.piyade.some(v=>v.marshal),false);});
+test('bonus asker başına katlanmaz; yalnız bulunduğu ordunun saldırı/savunması',()=>{const control=game();control.regions.H={owner:1,army:{piyade:3,okcu:0,kusatma:0}};const special=structuredClone(control);special.regions.A.veterans!.piyade[0].marshal=true;const orders=[[{type:'move' as const,from:'A' as const,to:'H' as const,army:{piyade:3,okcu:0,kusatma:0}}],[]] as Parameters<typeof resolveTurn>[1];const a=resolveTurn(control,orders,2000),b=resolveTurn(special,orders,2000);assert.equal(armyHealth(a.regions.H)-armyHealth(b.regions.H),1);assert.equal(armyHealth(b.regions.A)-armyHealth(a.regions.A),1);});
+test('mareşal ölünce iki tam tur terfi sayacı durur; ardından yeniden başlar',()=>{let g=game();g.replay=[];g.regions.A.veterans!.piyade[0].marshal=true;const n=structuredClone(g);n.regions.A.veterans!.piyade.shift();n.regions.A.health!.piyade.shift();n.regions.A.army.piyade--;updateCommanders(g,n,n.log,()=>{});assert.equal(n.command!.cooldownUntil[0],4);assert.equal(leader(n,0).length,0);n.turn=2;g=next(tick(n));assert.equal(g.regions.A.veterans!.piyade[0].age,0);g=next(tick(g));assert.equal(g.regions.A.veterans!.piyade[0].age,0);g=tick(g);assert.equal(g.regions.A.veterans!.piyade[0].age,1);});
+test('yeni asker aynı tur kıdem veya çatışma mirası almaz',()=>{const g=game();g.players[0].grain=100;const n=resolveTurn(g,[[{type:'recruit',at:'A',unit:'piyade'}],[]],2000);const v=n.regions.A.veterans!.piyade.at(-1)!;assert.equal(v.age,0);assert.equal(v.battles,0);assert.equal(v.marshal,undefined);});
