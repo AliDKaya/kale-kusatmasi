@@ -45,4 +45,6 @@ Yeni Kuşatma Vadisi odalarında kervan ekonomisi vardır. Bölge üretimi depod
 
 Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. Başlamayan maçta skor yazılmaz; başlamış maçta kapatmak teslim sayılır. Kapanış diğer oyuncuya canlı bildirilir, eski kodla katılım engellenir ve yeni oda açılabilir.
 
-Yeni büyük odalarda mareşal: aynı piyadenin 4 hayatta kalma + 2 çatışma turuyla terfisi, yerel ordu bonusu ve ölüm sonrası iki tur terfi beklemesi. Ayrıntı: `docs/MARESAL.md`. Otomatik toparlanma etkinliği ve bot antrenmanı henüz yoktur.
+Yeni büyük odalarda mareşal: aynı piyadenin 4 hayatta kalma + 2 çatışma turuyla terfisi, yerel ordu bonusu ve ölüm sonrası iki tur terfi beklemesi. Ayrıntı: `docs/MARESAL.md`. Otomatik toparlanma etkinliği henüz yoktur.
+
+`/antrenman`: iki haritada Acemi / Sancak Beyi / Serdar. Bot kamuya açık durumdan planlar; insan taslağını görmez. Oyun sunucuda çözülür, skor yalnız ayrı `training_scores` tablosuna yazılır; istemci puanı kabul edilmez. Altı harita/zorluk kategorisinde en iyi kişi skoru listelenir. Kurulumda `003_training.sql` de uygulanmalıdır.

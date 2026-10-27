@@ -1,0 +1,12 @@
+{
+  "baseURL": "https://kale-kusatmasi.vercel.app",
+  "date": "2026-10-27T01:01:49.280Z",
+  "controlledFixture": true,
+  "checks": {
+    "bothPlayersPromote": true,
+    "mapBadge": true,
+    "deathCooldown": true,
+    "mobile375": true,
+    "scoresCreated": 0
+  }
+}

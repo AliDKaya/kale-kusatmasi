@@ -22,3 +22,7 @@ Kullanıcı sonradan bot maçlarının da ayrı skor tablosunu istedi. Önceki �
 - Bot gerçek insan odasındaki ikinci oyuncunun yerine gizlice konmayacak; ayrı antrenman girişinden başlatılacak.
 
 Tahmin: sunucuda doğrulanan altı kategori dahil 3–5 saat. Tasarım ve gerçek oynanış dengesi bunu değiştirebilir.
+
+## Uygulama durumu (27 Ekim)
+
+İki haritada antrenman lobisi/oyun ekranı, üç deterministik seviye, sunucuda emir çözümü, ayrı altı kategori ve sahiplik kontrolü kodlandı. 003_training.sql uygulandı. 98 kural testi ve iki haritalı yerel UI/puan/yetki testi geçti. Bot oyuncunun taslağını almaz; ekstra kaynak verilmez. Serdar yalnız tahmin edilen kamuya açık karşı hamleleri değerlendirir, kusursuz strateji garantisi yoktur. Zorlukların insan kazanma oranları ölçülmedi. Canlı doğrulama yayından sonra kaydedilecek.
