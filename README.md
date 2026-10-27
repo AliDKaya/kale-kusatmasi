@@ -41,6 +41,6 @@ Büyük mod: piyade 10 can, okçu 5, mancınık 8, Şahi 3 can. Yaralıların ve
 
 Maden altın/taş, orman odun, köy tahıl üretir. Tutulan bölge iki tam turda bir, en fazla 3. seviyeye çıkar; ana kaynak +1/+2, 3. seviyede yerel savunma +1. Ele geçirmede gelişim sıfırlanır. Asker üretim kapasitesi bölge sayısıyla en fazla 4/tur olur. Dinlenme ve onarım ölen askeri diriltmez; ayrıntılı maliyet/iyileşme kuralları oyun içi rehberdedir.
 
-Kervan ve takas bu sürümde yoktur; sonraki aşamanın kapsamı `docs/KERVAN-PLANI.md` içindedir.
+Yeni Kuşatma Vadisi odalarında kervan ekonomisi vardır. Bölge üretimi depoda birikir; kendi yollarında ilerleyen kervan kaleye teslim ettiğinde harcanabilir. Yakındaki ordu baskın veya sınırlı 2’ye 1 yük takası yapabilir. Klasik ve eski açık büyük odalar önceki ekonomiyi korur. Kurallar/test kapsamı `docs/KERVAN-PLANI.md` içindedir.
 
 Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. Başlamayan maçta skor yazılmaz; başlamış maçta kapatmak teslim sayılır. Kapanış diğer oyuncuya canlı bildirilir, eski kodla katılım engellenir ve yeni oda açılabilir.

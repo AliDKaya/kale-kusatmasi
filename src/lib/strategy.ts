@@ -1,13 +1,13 @@
 import {emptyArmy,finish,finishByLimit,type Army,type BattleEvent,type Game,type Order,type RegionId,type Side,type Unit,type Territory} from './game';
+import {initialLogistics,validateCaravanOrders,resolveCaravanOrders,advanceLogistics} from './logistics';
+import {RESOURCE_KEYS,zeroResources,resourceText,type Resources} from './resources';
+export {RESOURCE_KEYS,RESOURCE_NAMES,zeroResources,resourceText,type Resources} from './resources';
 import {STRATEGY_REGIONS as REGIONS,STRATEGY_EDGES as EDGES} from './strategy-map';
 const neighbors=(a:RegionId,b:RegionId)=>EDGES.some(([x,y])=>x===a&&y===b||x===b&&y===a);
 
 export const STRATEGY_KEYS=['piyade','okcu','kusatma','sahi'] as const;
 const UNIT_KEYS=STRATEGY_KEYS;
 const count=(a:Army)=>UNIT_KEYS.reduce((n,u)=>n+(a[u]??0),0);
-export type Resources={gold:number;wood:number;stone:number;grain:number};
-export const RESOURCE_KEYS=['gold','wood','stone','grain'] as const;
-export const RESOURCE_NAMES={gold:'altın',wood:'odun',stone:'taş',grain:'tahıl'};
 export const STRATEGY_UNITS={
  piyade:{name:'Piyade',speed:2,hp:10,melee:3,ranged:0,range:0,cost:{gold:3,wood:1,stone:0,grain:2},role:'Ön saf · 10 can'},
  okcu:{name:'Okçu',speed:3,hp:5,melee:1,ranged:3,range:1,cost:{gold:4,wood:3,stone:0,grain:2},role:'1 bağlantıdan atış · 5 can'},
@@ -16,7 +16,6 @@ export const STRATEGY_UNITS={
 } as const;
 export const HOME:Record<Side,RegionId>={0:'A',1:'G'};
 export const CANNON_COST:Resources={gold:18,wood:8,stone:12,grain:4};
-export const zeroResources=():Resources=>({gold:0,wood:0,stone:0,grain:0});
 export const resources=(p:Game['players'][number]):Resources=>({gold:p.gold,wood:p.wood,stone:p.stone??0,grain:p.grain??0});
 export function distance(a:RegionId,b:RegionId):number{
  const seen=new Set<RegionId>([a]);let layer:RegionId[]=[a],d=0;
@@ -27,7 +26,6 @@ export function regionIncome(id:RegionId,level=1):Resources{
  return kind==='castle'?{gold:1,wood:1,stone:1,grain:1}:kind==='forest'?{gold:0,wood:3+bonus,stone:0,grain:0}:kind==='mine'?{gold:2,wood:0,stone:3+bonus,grain:0}:{gold:1,wood:0,stone:0,grain:4+bonus};
 }
 export function income(g:Game,side:Side):Resources{const result=zeroResources();for(const r of REGIONS)if(g.regions[r.id].owner===side)for(const k of RESOURCE_KEYS)result[k]+=regionIncome(r.id,g.regions[r.id].level??1)[k];return result;}
-export const resourceText=(r:Resources)=>RESOURCE_KEYS.filter(k=>r[k]).map(k=>`${r[k]} ${RESOURCE_NAMES[k]}`).join(' · ')||'yok';
 export const recruitCapacity=(g:Game,side:Side)=>Math.min(4,1+Math.floor(REGIONS.filter(r=>g.regions[r.id].owner===side).length/2));
 export function orderCost(g:Game,side:Side,o:Order):Resources{
  if(o.type==='cannon'){const n=g.regions[o.from].army.sahi??0;return {gold:n*2,wood:0,stone:n*2,grain:0};}
@@ -56,12 +54,13 @@ const sideName=(s:Side)=>s===0?'Batı':'Doğu';
 const mitigate=(raw:number,defending:boolean,armor=0)=>raw<=0?0:Math.max(1,Math.ceil(raw*(defending?.5:1))-armor);
 const castleSide=(id:RegionId):Side|null=>id==='A'?0:id==='G'?1:null;
 
-export function initialStrategyGame(now:number,waiting:boolean):Game{
+export function initialStrategyGame(now:number,waiting:boolean,withLogistics=false):Game{
  const regions=Object.fromEntries(REGIONS.map(r=>[r.id,{owner:null,army:emptyArmy()}])) as Game['regions'];
  regions.A={owner:0,army:{piyade:3,okcu:1,kusatma:0}};regions.G={owner:1,army:{piyade:3,okcu:1,kusatma:0}};
  for(const r of REGIONS)put(regions[r.id],force(regions[r.id]));
  const player=()=>({gold:10,wood:8,stone:4,grain:6,hp:20,wall:8,wallLevel:1});
- return{ruleset:2,turn:1,phase:waiting?'waiting':'playing',winner:null,players:[player(),player()],regions,deadline:new Date(now+30000).toISOString(),matchDeadline:waiting?undefined:new Date(now+720000).toISOString(),transitionReady:[false,false],sieges:[],history:[],log:['Surlar hazır. Maden taş ve altın, orman odun, merkez köy tahıl üretir.']};
+ const game:Game={ruleset:2,turn:1,phase:waiting?'waiting':'playing',winner:null,players:[player(),player()],regions,deadline:new Date(now+30000).toISOString(),matchDeadline:waiting?undefined:new Date(now+720000).toISOString(),transitionReady:[false,false],sieges:[],history:[],log:['Surlar hazır. Maden taş ve altın, orman odun, merkez köy tahıl üretir.']};
+ if(withLogistics)game.logistics=initialLogistics();return game;
 }
 
 export function validateStrategyOrders(g:Game,side:Side,orders:Order[]):void{
@@ -85,6 +84,7 @@ export function validateStrategyOrders(g:Game,side:Side,orders:Order[]):void{
   }else if(o.type==='cancel'){
    if(!g.sieges?.some(s=>s.side===side&&s.from===at))throw new Error('Bu bölgede devam eden kuşatma yok.');
    if(actions.has(`attack:${at}`))throw new Error('Aynı bölgeye iki saldırı emri verilemez.');actions.add(`attack:${at}`);
+  }else if(o.type==='raid'||o.type==='trade'){reserve(at,o.type==='raid'?['piyade','okcu']:UNIT_KEYS.filter(u=>(t.army[u]??0)>0));
   }else if(o.type==='move'){
    if(!neighbors(o.from,o.to))throw new Error('Hareket için çizili yoldaki komşu bölgeyi seç.');
    const owner=castleSide(o.to);if(owner!==null&&owner!==side&&(g.players[owner].wall??0)>0&&!g.players[owner].breaches?.includes(o.from)&&!orders.some(x=>x.type==='cannon'&&x.from===o.from&&x.to===o.to))throw new Error('Bu yöndeki sur ayakta. Kuşat emriyle yık veya Şahi ateşiyle gedik aç.');
@@ -111,6 +111,7 @@ export function validateStrategyOrders(g:Game,side:Side,orders:Order[]):void{
   }
  }
  if(recruits>recruitCapacity(g,side))throw new Error(`Bu tur en fazla ${recruitCapacity(g,side)} asker toplayabilirsin. Daha çok bölgeyle kapasiten artar.`);
+ validateCaravanOrders(g,side,orders);
  const total=plannedCost(g,side,orders),bank=resources(g.players[side]);if(RESOURCE_KEYS.some(k=>total[k]>bank[k]))throw new Error(`Kaynak yetersiz. Gereken: ${resourceText(total)}.`);
 }
 
@@ -192,10 +193,11 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
  runFirePhase('heavy');
  for(const breach of pendingBreaches){g.players[breach.side].breaches??=[];if(!g.players[breach.side].breaches!.includes(breach.from)){g.players[breach.side].breaches!.push(breach.from);event({phase:'aftermath',kind:'breach',at:HOME[breach.side],from:breach.from,to:HOME[breach.side],text:`${breach.from} → ${HOME[breach.side]} yönü açıldı; gelecek tur kullanılabilir`});}}
  for(const side of [0,1] as Side[]){const t=g.regions[HOME[side]];if(t.owner!==null&&t.owner!==side&&count(t.army)){const f=force(t);const n=attack(f,'piyade',1)+attack(f,'okcu',1)+attack(f,'kusatma',6);g.players[side].hp=Math.max(0,g.players[side].hp-n);log.push(`${sideName(side)} kalesinin içinde ${n} hasar; kale ${g.players[side].hp}/20.`);}}
- for(const {side,order:o} of recruits){if(g.regions[o.at].owner===side){const f=force(g.regions[o.at]);f.health[o.unit].push(...Array(o.quantity??1).fill(STRATEGY_UNITS[o.unit].hp));put(g.regions[o.at],f);event({phase:'aftermath',kind:'recruit',at:o.at,side,unit:o.unit,amount:o.quantity??1,text:`${label(o.at)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazır`});log.push(`${sideName(side)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazırlandı (${label(o.at)}); sonraki tur kullanılabilir.`);}else{const c=orderCost(original,side,o);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+c[k];log.push(`${sideName(side)}: ${label(o.at)} elveszett; termelés törölve, minden erőforrás visszajár.`);}}
+ for(const {side,order:o} of recruits){if(g.regions[o.at].owner===side){const f=force(g.regions[o.at]);f.health[o.unit].push(...Array(o.quantity??1).fill(STRATEGY_UNITS[o.unit].hp));put(g.regions[o.at],f);event({phase:'aftermath',kind:'recruit',at:o.at,side,unit:o.unit,amount:o.quantity??1,text:`${label(o.at)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazır`});log.push(`${sideName(side)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazırlandı (${label(o.at)}); sonraki tur kullanılabilir.`);}else{const c=orderCost(original,side,o);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+c[k];log.push(`${sideName(side)}: ${label(o.at)} kaybedildi; üretim iptal edildi, tüm kaynaklar iade edildi.`);}}
  for(const r of REGIONS){const t=g.regions[r.id];if(t.owner===null||r.kind==='castle'){t.level=1;t.heldTurns=0;continue;}const same=t.owner===original.regions[r.id].owner;t.heldTurns=same?(original.regions[r.id].heldTurns??0)+1:0;t.level=Math.min(3,1+Math.floor(t.heldTurns/2));if(t.level>(original.regions[r.id].level??1))log.push(`${sideName(t.owner)}: ${r.name} ${t.level}. seviyeye ulaştı; ana kaynak +${t.level-1}${t.level===3?', yerel savunma +1':''}.`);}
+ resolveCaravanOrders(original,g,orders,log,event);
  const active=new Set<RegionId>();const incoming=new Set<RegionId>();
- for(const side of [0,1] as Side[])for(const o of orders[side]){if('from' in o){active.add(o.from);incoming.add(o.to);}if(o.type==='repair'||o.type==='recruit')active.add(o.at);}
+ for(const side of [0,1] as Side[])for(const o of orders[side]){if('from' in o){active.add(o.from);if('to' in o)incoming.add(o.to);}if(o.type==='repair'||o.type==='recruit')active.add(o.at);}
  for(const siege of g.sieges){active.add(siege.from);incoming.add(siege.to);}
  for(const r of REGIONS){const t=g.regions[r.id];if(t.owner===null||t.owner!==original.regions[r.id].owner||active.has(r.id)||incoming.has(r.id)||g.players[t.owner].hp===0)continue;
   const f=force(t);const max=UNIT_KEYS.reduce((n,u)=>n+f.army[u]*STRATEGY_UNITS[u].hp,0);
@@ -208,6 +210,7 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
  const lost=([0,1] as Side[]).map(s=>!g.players[s].hp||REGIONS.every(r=>g.regions[r.id].owner!==s));
  if(lost.some(Boolean)){finish(g,lost.every(Boolean)?'draw':lost[0]?1:0,g.players.some(p=>!p.hp)?'castle':'elimination');return record();}
  if(g.turn>=16){const ended=finishByLimit(g,'turn-limit');Object.assign(g,ended);return record();}
- for(const side of [0,1] as Side[]){const c=income(g,side);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+c[k];log.push(`${sideName(side)} geliri: ${resourceText(c)}. Asker kapasitesi: ${recruitCapacity(g,side)}/tur.`);}
+ if(g.logistics)advanceLogistics(g,Object.fromEntries(REGIONS.map(r=>[r.id,regionIncome(r.id,g.regions[r.id].level??1)])) as Record<RegionId,Resources>,log,event);
+ else for(const side of [0,1] as Side[]){const c=income(g,side);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+c[k];log.push(`${sideName(side)} geliri: ${resourceText(c)}. Asker kapasitesi: ${recruitCapacity(g,side)}/tur.`);}
  g.turn++;g.phase='review';g.reviewUntil=new Date(now+9000).toISOString();g.transitionReady=[false,false];g.deadline=new Date(now).toISOString();return record();
 }

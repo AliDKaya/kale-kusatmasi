@@ -8,6 +8,9 @@ export function combatSound(ctx:AudioContext,events:BattleEvent[]):()=>void{
  if(events.some(e=>e.fieldBattle)){for(let i=0;i<3;i++){tone(90,45,.16,i*.2,'sine',.8);tone(i===2?294:196,i===2?294:196,.35,i*.16,'triangle',.25);}noise(.2,600,.05,.25);}
  const unique=[...new Map(events.map(e=>[e.kind,e])).values()].slice(0,3);
  for(const event of unique){
+  if(event.kind==='caravan'){noise(.1,650,0,.2);tone(110,70,.12,0,'triangle',.15);}
+  if(event.kind==='raid'){noise(.15,1800,0,.25);tone(160,70,.15,0,'triangle',.25);}
+  if(event.kind==='trade'){tone(620,620,.12,0,'sine',.2);tone(830,830,.15,.12,'sine',.2);}
   if(event.kind==='move'){const heavy=event.army?.kusatma||event.army?.sahi;for(let i=0;i<3;i++){noise(.07,heavy?450:900,i*.18,.25);tone(heavy?100:150,60,.07,i*.18,'triangle',.2);}}
   if(event.kind==='arrow'){tone(750,260,.09,0,'triangle',.35);noise(.18,6500,.04,.25);tone(180,60,.08,.5,'triangle',.25);}
   if(event.kind==='stone'){tone(150,300,.25,0,'sawtooth',.15);noise(.22,800,0,.2);tone(100,35,.3,.55,'sine',.8);noise(.25,800,.55,.35);}

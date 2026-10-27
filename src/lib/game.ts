@@ -1,5 +1,7 @@
 import {STRATEGY_REGIONS,STRATEGY_EDGES,type StrategyRegionId} from './strategy-map';
 import { initialStrategyGame, resolveStrategyTurn, validateStrategyOrders } from './strategy';
+import type {Logistics} from './logistics';
+import type {ResourceKind} from './resources';
 export const REGIONS = [
   { id: 'A', name: 'Batı Kalesi', x: 10, y: 50, kind: 'castle' },
   { id: 'B', name: 'Kuzey Ormanı', x: 32, y: 24, kind: 'forest' },
@@ -23,14 +25,15 @@ export const UNIT_KEYS = ['piyade','okcu','kusatma'] as const;
 export const ECONOMY={startGold:8,startWood:5,baseGold:1,baseWood:1,mineGold:3,forestWood:2} as const;
 export const EDGES: [RegionId, RegionId][] = [['A','B'],['A','C'],['B','D'],['C','D'],['D','E'],['D','F'],['E','G'],['F','G'],['B','E'],['C','F']];
 export type LegacyOrder = { type: 'recruit'; at: RegionId; unit: Unit; quantity?: number } | { type: 'move'; from: RegionId; to: RegionId; army: Army } | { type: 'defend'; at: RegionId };
-export type Order = LegacyOrder | { type: 'fire'; from: RegionId; to: RegionId; unit: 'okcu' | 'kusatma' } | { type: 'siege'; from: RegionId; to: RegionId } | { type: 'cannon'; from: RegionId; to: RegionId } | { type: 'cancel'; at: RegionId } | { type: 'upgrade'; at: RegionId } | { type: 'repair'; at: RegionId };
+export type Order = LegacyOrder | { type: 'fire'; from: RegionId; to: RegionId; unit: 'okcu' | 'kusatma' } | { type: 'siege'; from: RegionId; to: RegionId } | { type: 'cannon'; from: RegionId; to: RegionId } | { type: 'cancel'; at: RegionId } | { type: 'upgrade'; at: RegionId } | { type: 'repair'; at: RegionId } | {type:'raid';from:RegionId;caravanId:string} | {type:'trade';from:RegionId;caravanId:string;give:ResourceKind;take:ResourceKind;amount:number};
 export type Territory = { owner: Side | null; army: Army; health?: Record<Unit,number[]>; heldTurns?:number; level?:number };
-export type BattleEvent={id:string;phase:'prepare'|'fast'|'march'|'melee'|'heavy'|'aftermath';kind:'move'|'arrow'|'stone'|'cannon'|'melee'|'impact'|'death'|'capture'|'heal'|'repair'|'breach'|'recruit';side?:Side;from?:RegionId;to?:RegionId;at?:RegionId;unit?:Unit;army?:Army;amount?:number;text:string;fieldBattle?:boolean};
+export type BattleEvent={id:string;phase:'prepare'|'fast'|'march'|'melee'|'heavy'|'aftermath';kind:'move'|'arrow'|'stone'|'cannon'|'melee'|'impact'|'death'|'capture'|'heal'|'repair'|'breach'|'recruit'|'caravan'|'raid'|'trade';side?:Side;from?:RegionId;to?:RegionId;at?:RegionId;unit?:Unit;army?:Army;amount?:number;text:string;fieldBattle?:boolean};
 export type Game = {
   closed?: boolean;
   rulesRevision?:2;
   ruleset?: 2;
   replay?: BattleEvent[];
+  logistics?:Logistics;
   sieges?: {side:Side;from:RegionId;to:RegionId}[];
   lastShots?: {side:Side;from:RegionId;to:RegionId;damage:number;kind:'fire'|'siege'}[];
   turn: number; deadline: string; phase: 'waiting' | 'playing' | 'review' | 'finished'; winner: Side | 'draw' | null;
@@ -53,7 +56,7 @@ const name = (id: RegionId) => REGIONS.find(r => r.id === id)!.name;
 const sideName = (s: Side) => s === 0 ? 'Batı' : 'Doğu';
 
 export const rules = (g?: Game | null) => ({turnSeconds:g?.ruleset===2?30:g?.rulesRevision===2?20:15,matchSeconds:g?.ruleset===2?720:g?.rulesRevision===2?360:180,maxTurns:g?.ruleset===2?16:10,orderLimit:g?.ruleset===2?4:2});
-export function initialGame(now = Date.now(), waiting = false): Game { return initialStrategyGame(now,waiting); }
+export function initialGame(now = Date.now(), waiting = false, withLogistics=false): Game { return initialStrategyGame(now,waiting,withLogistics); }
 export function initialClassicGame(now=Date.now(),waiting=false):Game{const g=initialLegacyGame(now,waiting);g.rulesRevision=2;g.deadline=new Date(now+20000).toISOString();if(!waiting)g.matchDeadline=new Date(now+360000).toISOString();return g;}
 export function initialLegacyGame(now = Date.now(), waiting = false): Game {
   const regions = Object.fromEntries(REGIONS.map(r => [r.id, { owner: null, army: emptyArmy() }])) as Game['regions'];
