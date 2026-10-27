@@ -1,0 +1,629 @@
+{
+  "generatedAt": "2026-10-27T00:07:48.398Z",
+  "method": "Offline deterministic scenarios; no human win-rate estimate. Defender uses available ranged fire and defense; field healing disabled in field duels. Siege defender repairs whenever affordable.",
+  "field": [
+    {
+      "label": "1 piyade → 1 okçu",
+      "attacker": {
+        "piyade": 1,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "defender": {
+        "piyade": 0,
+        "okcu": 1,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "result": "attacker_destroyed",
+      "rounds": 3,
+      "history": [
+        {
+          "turn": 1,
+          "attackerHp": 6,
+          "defenderHp": 3,
+          "owner": 1
+        },
+        {
+          "turn": 2,
+          "attackerHp": 3,
+          "defenderHp": 2,
+          "owner": 1
+        },
+        {
+          "turn": 3,
+          "attackerHp": 0,
+          "defenderHp": 1,
+          "owner": 1
+        }
+      ]
+    },
+    {
+      "label": "3 piyade → 3 piyade",
+      "attacker": {
+        "piyade": 3,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "defender": {
+        "piyade": 3,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "result": "attacker_destroyed",
+      "rounds": 4,
+      "history": [
+        {
+          "turn": 1,
+          "attackerHp": 21,
+          "defenderHp": 25,
+          "owner": 1
+        },
+        {
+          "turn": 2,
+          "attackerHp": 13,
+          "defenderHp": 21,
+          "owner": 1
+        },
+        {
+          "turn": 3,
+          "attackerHp": 6,
+          "defenderHp": 19,
+          "owner": 1
+        },
+        {
+          "turn": 4,
+          "attackerHp": 0,
+          "defenderHp": 18,
+          "owner": 1
+        }
+      ]
+    },
+    {
+      "label": "2 piyade + 1 okçu → 3 piyade",
+      "attacker": {
+        "piyade": 2,
+        "okcu": 1,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "defender": {
+        "piyade": 3,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "result": "turn_limit",
+      "rounds": 16,
+      "history": [
+        {
+          "turn": 1,
+          "attackerHp": 16,
+          "defenderHp": 25,
+          "owner": 1
+        },
+        {
+          "turn": 2,
+          "attackerHp": 9,
+          "defenderHp": 21,
+          "owner": 1
+        },
+        {
+          "turn": 3,
+          "attackerHp": 5,
+          "defenderHp": 18,
+          "owner": 1
+        },
+        {
+          "turn": 4,
+          "attackerHp": 5,
+          "defenderHp": 16,
+          "owner": 1
+        },
+        {
+          "turn": 5,
+          "attackerHp": 5,
+          "defenderHp": 15,
+          "owner": 1
+        },
+        {
+          "turn": 6,
+          "attackerHp": 5,
+          "defenderHp": 14,
+          "owner": 1
+        },
+        {
+          "turn": 7,
+          "attackerHp": 5,
+          "defenderHp": 13,
+          "owner": 1
+        },
+        {
+          "turn": 8,
+          "attackerHp": 5,
+          "defenderHp": 12,
+          "owner": 1
+        },
+        {
+          "turn": 9,
+          "attackerHp": 5,
+          "defenderHp": 11,
+          "owner": 1
+        },
+        {
+          "turn": 10,
+          "attackerHp": 5,
+          "defenderHp": 10,
+          "owner": 1
+        },
+        {
+          "turn": 11,
+          "attackerHp": 5,
+          "defenderHp": 9,
+          "owner": 1
+        },
+        {
+          "turn": 12,
+          "attackerHp": 5,
+          "defenderHp": 8,
+          "owner": 1
+        },
+        {
+          "turn": 13,
+          "attackerHp": 5,
+          "defenderHp": 7,
+          "owner": 1
+        },
+        {
+          "turn": 14,
+          "attackerHp": 5,
+          "defenderHp": 6,
+          "owner": 1
+        },
+        {
+          "turn": 15,
+          "attackerHp": 5,
+          "defenderHp": 5,
+          "owner": 1
+        },
+        {
+          "turn": 16,
+          "attackerHp": 5,
+          "defenderHp": 4,
+          "owner": 1
+        }
+      ]
+    },
+    {
+      "label": "3 piyade → 2 piyade + 1 okçu",
+      "attacker": {
+        "piyade": 3,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "defender": {
+        "piyade": 2,
+        "okcu": 1,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "result": "attacker_destroyed",
+      "rounds": 4,
+      "history": [
+        {
+          "turn": 1,
+          "attackerHp": 20,
+          "defenderHp": 20,
+          "owner": 1
+        },
+        {
+          "turn": 2,
+          "attackerHp": 11,
+          "defenderHp": 17,
+          "owner": 1
+        },
+        {
+          "turn": 3,
+          "attackerHp": 3,
+          "defenderHp": 15,
+          "owner": 1
+        },
+        {
+          "turn": 4,
+          "attackerHp": 0,
+          "defenderHp": 15,
+          "owner": 1
+        }
+      ]
+    },
+    {
+      "label": "2 piyade + 1 mancınık → 3 piyade",
+      "attacker": {
+        "piyade": 2,
+        "okcu": 0,
+        "kusatma": 1,
+        "sahi": 0
+      },
+      "defender": {
+        "piyade": 3,
+        "okcu": 0,
+        "kusatma": 0,
+        "sahi": 0
+      },
+      "result": "turn_limit",
+      "rounds": 16,
+      "history": [
+        {
+          "turn": 1,
+          "attackerHp": 19,
+          "defenderHp": 26,
+          "owner": 1
+        },
+        {
+          "turn": 2,
+          "attackerHp": 11,
+          "defenderHp": 23,
+          "owner": 1
+        },
+        {
+          "turn": 3,
+          "attackerHp": 8,
+          "defenderHp": 21,
+          "owner": 1
+        },
+        {
+          "turn": 4,
+          "attackerHp": 8,
+          "defenderHp": 20,
+          "owner": 1
+        },
+        {
+          "turn": 5,
+          "attackerHp": 8,
+          "defenderHp": 19,
+          "owner": 1
+        },
+        {
+          "turn": 6,
+          "attackerHp": 8,
+          "defenderHp": 18,
+          "owner": 1
+        },
+        {
+          "turn": 7,
+          "attackerHp": 8,
+          "defenderHp": 17,
+          "owner": 1
+        },
+        {
+          "turn": 8,
+          "attackerHp": 8,
+          "defenderHp": 16,
+          "owner": 1
+        },
+        {
+          "turn": 9,
+          "attackerHp": 8,
+          "defenderHp": 15,
+          "owner": 1
+        },
+        {
+          "turn": 10,
+          "attackerHp": 8,
+          "defenderHp": 14,
+          "owner": 1
+        },
+        {
+          "turn": 11,
+          "attackerHp": 8,
+          "defenderHp": 13,
+          "owner": 1
+        },
+        {
+          "turn": 12,
+          "attackerHp": 8,
+          "defenderHp": 12,
+          "owner": 1
+        },
+        {
+          "turn": 13,
+          "attackerHp": 8,
+          "defenderHp": 11,
+          "owner": 1
+        },
+        {
+          "turn": 14,
+          "attackerHp": 8,
+          "defenderHp": 10,
+          "owner": 1
+        },
+        {
+          "turn": 15,
+          "attackerHp": 8,
+          "defenderHp": 9,
+          "owner": 1
+        },
+        {
+          "turn": 16,
+          "attackerHp": 8,
+          "defenderHp": 8,
+          "owner": 1
+        }
+      ]
+    }
+  ],
+  "siege": [
+    {
+      "engines": 1,
+      "defenderHasFullSupply": false,
+      "shots": 10,
+      "repairs": 4,
+      "castleHp": 0,
+      "result": "castle",
+      "history": [
+        {
+          "turn": 1,
+          "hp": 20,
+          "wall": 2,
+          "grain": 7
+        },
+        {
+          "turn": 2,
+          "hp": 20,
+          "wall": 2,
+          "grain": 6
+        },
+        {
+          "turn": 3,
+          "hp": 20,
+          "wall": 2,
+          "grain": 5
+        },
+        {
+          "turn": 4,
+          "hp": 16,
+          "wall": 0,
+          "grain": 6
+        },
+        {
+          "turn": 5,
+          "hp": 10,
+          "wall": 0,
+          "grain": 7
+        },
+        {
+          "turn": 6,
+          "hp": 13,
+          "wall": 0,
+          "grain": 6
+        },
+        {
+          "turn": 7,
+          "hp": 7,
+          "wall": 0,
+          "grain": 7
+        },
+        {
+          "turn": 8,
+          "hp": 1,
+          "wall": 0,
+          "grain": 8
+        },
+        {
+          "turn": 9,
+          "hp": 4,
+          "wall": 0,
+          "grain": 7
+        },
+        {
+          "turn": 10,
+          "hp": 0,
+          "wall": 0,
+          "grain": 7
+        }
+      ]
+    },
+    {
+      "engines": 1,
+      "defenderHasFullSupply": true,
+      "shots": 16,
+      "repairs": 15,
+      "castleHp": 20,
+      "result": "turn-limit",
+      "history": [
+        {
+          "turn": 1,
+          "hp": 20,
+          "wall": 2,
+          "grain": 11
+        },
+        {
+          "turn": 2,
+          "hp": 20,
+          "wall": 2,
+          "grain": 15
+        },
+        {
+          "turn": 3,
+          "hp": 20,
+          "wall": 2,
+          "grain": 19
+        },
+        {
+          "turn": 4,
+          "hp": 20,
+          "wall": 2,
+          "grain": 24
+        },
+        {
+          "turn": 5,
+          "hp": 20,
+          "wall": 2,
+          "grain": 29
+        },
+        {
+          "turn": 6,
+          "hp": 20,
+          "wall": 2,
+          "grain": 34
+        },
+        {
+          "turn": 7,
+          "hp": 20,
+          "wall": 2,
+          "grain": 39
+        },
+        {
+          "turn": 8,
+          "hp": 20,
+          "wall": 2,
+          "grain": 44
+        },
+        {
+          "turn": 9,
+          "hp": 20,
+          "wall": 2,
+          "grain": 49
+        },
+        {
+          "turn": 10,
+          "hp": 20,
+          "wall": 2,
+          "grain": 54
+        },
+        {
+          "turn": 11,
+          "hp": 20,
+          "wall": 2,
+          "grain": 59
+        },
+        {
+          "turn": 12,
+          "hp": 20,
+          "wall": 2,
+          "grain": 64
+        },
+        {
+          "turn": 13,
+          "hp": 20,
+          "wall": 2,
+          "grain": 69
+        },
+        {
+          "turn": 14,
+          "hp": 20,
+          "wall": 2,
+          "grain": 74
+        },
+        {
+          "turn": 15,
+          "hp": 20,
+          "wall": 2,
+          "grain": 79
+        },
+        {
+          "turn": 16,
+          "hp": 20,
+          "wall": 2,
+          "grain": 77
+        }
+      ]
+    },
+    {
+      "engines": 2,
+      "defenderHasFullSupply": false,
+      "shots": 4,
+      "repairs": 2,
+      "castleHp": 0,
+      "result": "castle",
+      "history": [
+        {
+          "turn": 1,
+          "hp": 16,
+          "wall": 0,
+          "grain": 7
+        },
+        {
+          "turn": 2,
+          "hp": 13,
+          "wall": 0,
+          "grain": 6
+        },
+        {
+          "turn": 3,
+          "hp": 10,
+          "wall": 0,
+          "grain": 5
+        },
+        {
+          "turn": 4,
+          "hp": 0,
+          "wall": 0,
+          "grain": 5
+        }
+      ]
+    },
+    {
+      "engines": 2,
+      "defenderHasFullSupply": true,
+      "shots": 7,
+      "repairs": 6,
+      "castleHp": 0,
+      "result": "castle",
+      "history": [
+        {
+          "turn": 1,
+          "hp": 16,
+          "wall": 0,
+          "grain": 11
+        },
+        {
+          "turn": 2,
+          "hp": 13,
+          "wall": 0,
+          "grain": 15
+        },
+        {
+          "turn": 3,
+          "hp": 10,
+          "wall": 0,
+          "grain": 19
+        },
+        {
+          "turn": 4,
+          "hp": 7,
+          "wall": 0,
+          "grain": 24
+        },
+        {
+          "turn": 5,
+          "hp": 4,
+          "wall": 0,
+          "grain": 29
+        },
+        {
+          "turn": 6,
+          "hp": 1,
+          "wall": 0,
+          "grain": 34
+        },
+        {
+          "turn": 7,
+          "hp": 0,
+          "wall": 0,
+          "grain": 32
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Not exhaustive strategy search",
+    "No human matches or rating estimates",
+    "Army budgets differ; exact army compositions are shown",
+    "Operational balance remains provisional"
+  ]
+}

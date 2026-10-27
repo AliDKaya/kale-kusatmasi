@@ -2,7 +2,7 @@ import 'server-only';
 import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js';
 import { createHash, randomInt } from 'node:crypto';
-import { Game, Order, Side, finish, initialGame, resolveTurn, score, validateOrders, beginRound, finishByLimit } from './game';
+import { Game, Order, Side, finish, initialGame, initialClassicGame, resolveTurn, score, rules, validateOrders, beginRound, finishByLimit } from './game';
 import type { Action } from './schema';
 
 type DB = ReturnType<typeof postgres>;
@@ -22,7 +22,7 @@ export async function identity(request: Request): Promise<string> {
   if (error || !data.user) throw new ApiError('Oturum doğrulanamadı. Yeniden bağlanmayı dene.', 401);
   return data.user.id;
 }
-type Room = { id: string; code: string; state: Game | null; version: number; finished_at: string | null };
+type Room = { id: string; code: string; state: Game | null; version: number; mode: 'classic'|'strategy'; finished_at: string | null };
 const isClosed = (room: Room) => !!room.finished_at && (!room.state || room.state.phase !== 'finished' || !!room.state.closed);
 type Member = { player_id: string; nickname: string; side: Side };
 async function transaction<T>(callback: (tx: DB) => Promise<T>): Promise<T> {
@@ -35,13 +35,13 @@ async function guardMutation(tx: DB, user: string) {
   if (p?.last_mutation_at && Date.now() - new Date(p.last_mutation_at).getTime() < 1000) throw new ApiError('Bir saniye bekleyip tekrar dene.', 429);
   await tx`update public.players set last_mutation_at = now() where id = ${user}`;
 }
-export async function createRoom(user: string, nickname: string) {
+export async function createRoom(user: string, nickname: string, mode: 'classic'|'strategy'='classic') {
   return transaction(async tx => {
     await tx`insert into public.players (id,nickname) values (${user},${nickname}) on conflict (id) do nothing`;
     await guardMutation(tx,user);
     const [existing] = await tx`select r.code from public.rooms r join public.room_players p on p.room_id=r.id where p.player_id=${user} and r.finished_at is null and r.created_at > now() - interval '1 hour' limit 1`;
     if (existing) throw new ApiError(`Devam eden odan var: ${existing.code}. Koda katılarak dönebilirsin.`,409);
-    const [r] = await tx`insert into public.rooms (code) values (${roomCode()}) returning id,code`;
+    const [r] = await tx`insert into public.rooms (code,mode) values (${roomCode()},${mode}) returning id,code`;
     await tx`insert into public.room_players (room_id,player_id,side,nickname) values (${r.id},${user},0,${nickname})`;
     return { code: r.code };
   });
@@ -49,7 +49,7 @@ export async function createRoom(user: string, nickname: string) {
 export async function joinRoom(user: string, code: string, nickname: string) {
   return transaction(async tx => {
     await tx`insert into public.players (id,nickname) values (${user},${nickname}) on conflict (id) do nothing`;
-    const [r] = await tx<Room[]>`select id,code,state,version,finished_at from public.rooms where code=${code} for update`;
+    const [r] = await tx<Room[]>`select id,code,state,version,finished_at,mode from public.rooms where code=${code} for update`;
     if (!r) throw new ApiError('Bu kodla bir oda bulunamadı.',404);
     if (isClosed(r)) throw new ApiError('Bu oda sahibi tarafından kapatıldı. Yeni bir odaya katıl.',410);
     const members = await tx<Member[]>`select player_id,nickname,side from public.room_players where room_id=${r.id} order by side`;
@@ -57,7 +57,7 @@ export async function joinRoom(user: string, code: string, nickname: string) {
     await guardMutation(tx,user);
     if (members.length >= 2 || r.state) throw new ApiError('Bu oda dolu. Tam olarak iki oyuncu katılabilir.',409);
     await tx`insert into public.room_players (room_id,player_id,side,nickname) values (${r.id},${user},1,${nickname})`;
-    await tx`update public.rooms set state=${tx.json(initialGame(Date.now(),true))},version=version+1 where id=${r.id}`;
+    await tx`update public.rooms set state=${tx.json(r.mode==='strategy'?initialGame(Date.now(),true):initialClassicGame(Date.now(),true))},version=version+1 where id=${r.id}`;
     return { code };
   });
 }
@@ -73,7 +73,7 @@ async function saveScores(tx: DB, room: Room, members: Member[]) {
 }
 export async function roomState(user: string, code: string, action?: Action) {
   return transaction(async tx => {
-    const [r] = await tx<Room[]>`select id,code,state,version,finished_at from public.rooms where code=${code} for update`;
+    const [r] = await tx<Room[]>`select id,code,state,version,finished_at,mode from public.rooms where code=${code} for update`;
     if (!r) throw new ApiError('Oda bulunamadı.',404);
     const members = await tx<Member[]>`select player_id,nickname,side from public.room_players where room_id=${r.id} order by side`;
     const me = members.find(m => m.player_id === user);
@@ -104,7 +104,7 @@ export async function roomState(user: string, code: string, action?: Action) {
       return snapshot(tx,r,members,me);
     }
     // Existing matches from the previous release receive a total clock once, without restarting their turn.
-    if(r.state?.phase==='playing'&&!r.state.matchDeadline){r.state.matchDeadline=new Date(Date.now()+180_000).toISOString();changed=true;}
+    if(r.state?.phase==='playing'&&!r.state.matchDeadline){r.state.matchDeadline=new Date(Date.now()+rules(r.state).matchSeconds*1000).toISOString();changed=true;}
     if(r.state?.phase!=='finished'&&r.state?.matchDeadline&&Date.now()>=new Date(r.state.matchDeadline).getTime()){
       r.state=finishByLimit(r.state);changed=true;
     }
@@ -152,14 +152,14 @@ export async function roomState(user: string, code: string, action?: Action) {
 }
 async function snapshot(tx: DB, room: Room, members: Member[], me: Member) {
   const orders = room.state ? await tx`select player_id,payload,ready from public.orders where room_id=${room.id} and turn=${room.state.turn}` : [];
-  return { id: room.id, code: room.code, version: room.version, closed: isClosed(room), game: isClosed(room) ? null : room.state, side: me.side, serverTime: new Date().toISOString(),
+  return { id: room.id, code: room.code, version: room.version, closed: isClosed(room), mode:room.mode, game: isClosed(room) ? null : room.state, side: me.side, serverTime: new Date().toISOString(),
     players: members.map(m => ({ id: m.player_id, nickname: m.nickname, side: m.side, ready: room.state?.phase==='waiting'||room.state?.phase==='review'?!!room.state.transitionReady?.[m.side]:!!orders.find(o => o.player_id === m.player_id)?.ready })),
     ownOrders: room.state?.phase==='playing'?(orders.find(o => o.player_id === me.player_id)?.payload ?? []):[] };
 }
-export async function leaderboard(today: boolean, user?: string) {
+export async function leaderboard(today: boolean, user?: string, mode:'all'|'classic'|'strategy'='all') {
   const rows = await db()`with ranked as (
-    select player_id,nickname,score,created_at,id,row_number() over (order by score desc,created_at asc,id asc)::int as position
-    from public.scores where (not ${today} or created_at >= date_trunc('day',now() at time zone 'Europe/Istanbul') at time zone 'Europe/Istanbul')
+    select s.player_id,s.nickname,s.score,s.created_at,s.id,row_number() over (order by s.score desc,s.created_at asc,s.id asc)::int as position
+    from public.scores s join public.rooms r on r.id=s.room_id where (${mode}='all' or r.mode=${mode}) and (not ${today} or s.created_at >= date_trunc('day',now() at time zone 'Europe/Istanbul') at time zone 'Europe/Istanbul')
   ) select * from ranked where position <= 10 or player_id=${user ?? null}::uuid order by position`;
   const mapped = (r: typeof rows[number]) => ({ sira: r.position, ad: r.nickname, skor: r.score, zaman: new Date(r.created_at).toISOString().replace('.000Z','Z') });
   return { skorlar: rows.filter(r => r.position <= 10).map(mapped), own: rows.filter(r => r.player_id === user).map(mapped) };

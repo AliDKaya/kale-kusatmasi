@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { battle, emptyArmy, initialGame, resolveTurn, score, validateOrders, beginRound, finishByLimit } from '../src/lib/game';
+import { battle, emptyArmy, initialLegacyGame as initialGame, resolveTurn, score, validateOrders, beginRound, finishByLimit } from '../src/lib/game';
 import { actionSchema } from '../src/lib/schema';
 const army=(p=0,a=0,s=0)=>({piyade:p,okcu:a,kusatma:s});
 test('iki taraf tamamen eşit başlar',()=>{const g=initialGame(0);assert.deepEqual(g.players[0],g.players[1]);assert.deepEqual(g.regions.A.army,g.regions.G.army);assert.equal(g.deadline,'1970-01-01T00:00:15.000Z');});
@@ -18,7 +18,7 @@ test('köy indirimi ve üretimin çözüm sonunda gelmesi',()=>{const g=initialG
 test('kuşatma kaleye altı hasar verir',()=>{const g=initialGame();g.regions.G={owner:0,army:army(0,0,1)};const n=resolveTurn(g,[[],[]]);assert.equal(n.players[1].hp,14);});
 test('iki kale aynı anda yıkılırsa beraberlik ve yalnızca bitmiş maçtan skor',()=>{const g=initialGame();assert.throws(()=>score(g,0));g.players[0].hp=g.players[1].hp=6;g.regions.A={owner:1,army:army(0,0,1)};g.regions.G={owner:0,army:army(0,0,1)};const n=resolveTurn(g,[[],[]]);assert.equal(n.phase,'finished');assert.equal(n.winner,'draw');assert.equal(score(n,0),120);});
 test('onuncu turda kale ardından bölge ardından beraberlik',()=>{const g=initialGame();g.turn=10;assert.equal(resolveTurn(g,[[],[]]).winner,'draw');g.regions.B.owner=0;assert.equal(resolveTurn(g,[[],[]]).winner,0);g.players[1].hp=19;g.regions.B.owner=1;assert.equal(resolveTurn(g,[[],[]]).winner,0);});
-test('negatif adet, üçüncü emir, yabancı alan ve istemci puanı Zod tarafından reddedilir',()=>{const base={action:'orders',operationId:crypto.randomUUID(),turn:1,orders:[],ready:false};assert.equal(actionSchema.safeParse({...base,skor:999}).success,false);assert.equal(actionSchema.safeParse({...base,orders:[{type:'move',from:'A',to:'B',army:army(-1)}]}).success,false);assert.equal(actionSchema.safeParse({...base,orders:Array(3).fill({type:'defend',at:'A'})}).success,false);});
+test('negatif adet, üçüncü emir, yabancı alan ve istemci puanı Zod tarafından reddedilir',()=>{const base={action:'orders',operationId:crypto.randomUUID(),turn:1,orders:[],ready:false};assert.equal(actionSchema.safeParse({...base,skor:999}).success,false);assert.equal(actionSchema.safeParse({...base,orders:[{type:'move',from:'A',to:'B',army:army(-1)}]}).success,false);assert.equal(actionSchema.safeParse({...base,orders:Array(5).fill({type:'defend',at:'A'})}).success,false);});
 test('son bölgesi ve ordusu yok edilen oyuncu kale canı kalsa da hemen elenir',()=>{const g=initialGame();g.regions.A.army=army(1);g.regions.B={owner:1,army:army(4)};const n=resolveTurn(g,[[],[{type:'move',from:'B',to:'A',army:army(4)}]]);assert.ok(n.players[0].hp>0);assert.equal(n.phase,'finished');assert.equal(n.winner,1);assert.equal(n.finishReason,'elimination');});
 test('askeri kalmayan ama bölgesi olan oyuncu asker toplayarak devam eder',()=>{const g=initialGame();g.regions.A.army=emptyArmy();const n=resolveTurn(g,[[],[]]);assert.equal(n.phase,'review');validateOrders(beginRound(n,Date.now()+3000),0,[{type:'recruit',at:'A',unit:'piyade'}]);});
 

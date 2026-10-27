@@ -6,7 +6,7 @@
 
 1. `npm ci`
 2. `.env.example` dosyasını `.env.local` olarak kopyalayıp kendi yeni Supabase projenin değerlerini doldur. Gizli `DATABASE_URL` yalnızca sunucuda kullanılır.
-3. Supabase SQL Editor'da `supabase/migrations/001_game.sql` dosyasını bir kez çalıştır. Anonymous Sign-Ins seçeneğini etkinleştir.
+3. Supabase SQL Editor'da `supabase/migrations/001_game.sql` dosyasını, ardından `002_room_modes.sql` dosyasını bir kez çalıştır. Anonymous Sign-Ins seçeneğini etkinleştir.
 4. `npm run check:setup`, ardından `npm run dev`.
 
 ## Kontroller
@@ -23,7 +23,7 @@ Tarayıcı anonim Supabase oturumu açar; sunucu JWT'yi `getUser` ile doğrular.
 
 Veritabanı tablolarında RLS ve doğrudan istemci erişimi yasağı vardır. Realtime özel oda kanalına yalnızca üyeler bağlanabilir; Presence yalnızca bağlantı göstergesidir ve oyun otoritesi değildir. Skor bildirimleri kayıtla aynı işlemde üretilir. İstemciler bildirimi alınca doğrulanmış görünümü yeniden çeker; yeniden bağlantıda ve sayfa dönüşünde durumu toparlar. Sunucuda sürekli zamanlayıcı yoktur.
 
-Kaynaklar ve skor localStorage'da saklanmaz. Tarayıcıda yalnızca Supabase oturumu, takma ad tercihi ve son oda kodu tutulur. Savaş kuralları ve gerçek kanıt durumu `/rapor` içindedir.
+Kaynaklar ve skor localStorage'da saklanmaz. Tarayıcıda yalnızca Supabase oturumu, takma ad, son oda ve kozmetik harita tercihi tutulur. Savaş kuralları ve gerçek kanıt durumu `/rapor` içindedir.
 
 ## Yayın
 
@@ -31,6 +31,16 @@ Vercel CLI ile ayrı `kale-kusatmasi` projesi kullanılır; GitHub zorunlu deği
 
 ## Güncel oyun akışı
 
-İki oyuncu da Maça hazırım demeden ilk sayaç başlamaz. Her tur iki gizli emir hazırlanır; iki emir onayı veya 15 saniye sonunda çözüm yapılır. Sonuç aşamasında tur sayacı durur; iki oyuncu Sonraki tura hazırım demeden yeni tur başlamaz. Toplam maç sınırı başlangıç onayları tamamlandıktan sonra üç dakikadır. Hiç bölgesi ve ordusu kalmayan oyuncu elenir. Başlangıç 8 altın / 5 odun; kale geliri 1/1, maden 3 altın, orman 2 odundur.
+Oda açarken **Klasik** (7 bölge, 10 tur, 20 sn, 2 emir) veya **Kuşatma Vadisi** (13 bölge, 16 tur, 30 sn, 4 emir) seçilir. Katılan oyuncu oda türünü koddan alır. Eski açık maçlar eski süre/kural sürümüyle biter.
+
+İki oyuncu Maça hazırım demeden ilk sayaç başlamaz. Emir onayları tamamlanınca veya tur süresi bitince çözüm yapılır. Sonuçta sayaç durur; iki devam onayı beklenir. Toplam maç sınırı klasik için 6, büyük mod için 12 dakikadır; sonuç beklemeleri dahildir.
+
+Klasik kaynakları ve savaş hesabı korunur. Altın Vadi haritası klasik için yalnız kozmetiktir. Büyük modda taş ve tahıl, toplu üretim, asker başına kalıcı can/yaralanma, orduya uzaktan atış, sur/gedik, Şahi topu ve bölge gelişimi vardır. Haritanın köşe kaleleri ve oynanabilir alanları SVG kontür/yol katmanıyla ayrılır; mobilde yalnız harita kendi içinde kayar.
+
+Büyük mod: piyade 10 can, okçu 5, mancınık 8, Şahi 3 can. Yaralıların verdiği hasar kalan canlarıyla azalır. Okçu 1, mancınık 2 bağlantıdan vurur. İki ağır araç yalnız ana kalede üretilir. Şahi komşu kaleye top başına en fazla 2 ordu hasarı ve o yönde gedik açar; 1 tur doldurma bekler, salvo başına top başına 2 altın + 2 taş harcar. Gedik garnizonu öldürmez; savunmacılar hayattaysa kale alınmaz. Kuşatma emri iptale kadar tekrarlar.
+
+Maden altın/taş, orman odun, köy tahıl üretir. Tutulan bölge iki tam turda bir, en fazla 3. seviyeye çıkar; ana kaynak +1/+2, 3. seviyede yerel savunma +1. Ele geçirmede gelişim sıfırlanır. Asker üretim kapasitesi bölge sayısıyla en fazla 4/tur olur. Dinlenme ve onarım ölen askeri diriltmez; ayrıntılı maliyet/iyileşme kuralları oyun içi rehberdedir.
+
+Kervan ve takas bu sürümde yoktur; sonraki aşamanın kapsamı `docs/KERVAN-PLANI.md` içindedir.
 
 Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. Başlamayan maçta skor yazılmaz; başlamış maçta kapatmak teslim sayılır. Kapanış diğer oyuncuya canlı bildirilir, eski kodla katılım engellenir ve yeni oda açılabilir.
