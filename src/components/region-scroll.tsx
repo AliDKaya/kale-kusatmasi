@@ -29,7 +29,7 @@ export default function RegionScroll({region:r,game,side,advanced,expanded,alway
  const style={left:`${r.x}%`,top:`${r.y}%`} as CSSProperties;
  const offset=advanced?({A:16,B:16,I:20,C:28,H:24,K:32,D:8,L:12,E:16,J:36,F:16,M:24,G:12}[r.id]??16):16;
  const top=expanded?(r.y>=65?-210:r.y>=45?-75:offset):offset;
- const edge=r.x<15?(expanded?(advanced?10:52):12):r.x>85?(expanded?(advanced?-10:-52):-12):(advanced?({H:-8,K:8,D:-5,L:5}[r.id as 'H'|'K'|'D'|'L']??0):0);
+ const edge=r.x<15?(expanded?(advanced?10:52):12):r.x>85?(expanded?(advanced?-10:-52):-12):(advanced?({H:-20,K:20,D:-16,L:16}[r.id as 'H'|'K'|'D'|'L']??0):0);
  const ids=advanced?['A','B','I','C','H','K','D','L','E','J','F','M','G']:['A','B','E','D','C','F','G'];
  const index=ids.indexOf(r.id),columns=advanced?4:3,rows=Math.ceil(ids.length/columns);
  const cellWidth=frame.width/columns,cellHeight=frame.height/rows;
