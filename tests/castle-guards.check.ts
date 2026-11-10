@@ -2,7 +2,7 @@ import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 import {initialGame,resolveTurn,beginRound,type Game} from '../src/lib/game';
 async function main(){
-const b=await chromium.launch({executablePath:'C:/Users/alik7/AppData/Local/Programs/Opera GX/opera.exe',headless:true});
+const b=await chromium.launch({executablePath:process.env.UI_TEST_BROWSER_EXECUTABLE,headless:true});
 try{const c=await b.newContext({viewport:{width:1600,height:1100}});await c.routeWebSocket('**/realtime/**',ws=>ws.close());const p=await c.newPage();const uid='00000000-0000-4000-8000-000000000002';const epoch=Math.floor(Date.now()/1000);const token=Buffer.from('{"alg":"none"}').toString('base64url')+'.'+Buffer.from(JSON.stringify({sub:uid,exp:epoch+3600})).toString('base64url')+'.signature';
 await p.route('**/auth/v1/**',r=>r.fulfill({headers:{'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'GET, POST, OPTIONS'},json:{access_token:token,refresh_token:'test-refresh',token_type:'bearer',expires_in:3600,expires_at:epoch+3600,user:{id:uid,aud:'authenticated',role:'authenticated',is_anonymous:true,app_metadata:{},user_metadata:{}}}}));
 let game:Game|null=null;let posts=0;await p.route('**/api/rooms/TEST22',r=>{if(r.request().method()==='POST')posts++;return r.fulfill({json:{id:uid,code:'TEST22',version:1,closed:false,mode:'strategy',game,side:0,ownOrders:[],serverTime:new Date().toISOString(),players:[{id:uid,nickname:'Test',side:0,ready:false}]}});});

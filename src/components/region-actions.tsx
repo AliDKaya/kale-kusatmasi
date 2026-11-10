@@ -1,5 +1,6 @@
 "use client";
 import {useState} from 'react';
+import MarshalPromotion from './marshal-promotion';
 import {count,validateOrders,type Game,type Order,type RegionId,type Side} from '@/lib/game';
 import {distance,HOME,orderCost,resourceText} from '@/lib/strategy';
 import {STRATEGY_REGIONS} from '@/lib/strategy-map';
@@ -17,6 +18,7 @@ export default function RegionActions({game,side,region,orders,locked,lockReason
  const sieges=(game.sieges??[]).filter(s=>s.side===side&&(s.from===region||s.to===region));
  if(!own&&!enemyCastle&&!count(territory.army)&&!sieges.length)return null;
  return <section className="region-actions" aria-label={`${region} bölge eylemleri`}><div className="region-action-heading"><b>BURADAN EMİR VER</b><span>{orders.length}/4 emir</span></div>
+  {own&&<MarshalPromotion game={game} side={side} at={region} orders={orders} locked={locked} onOrder={onOrder}/>}
   {own&&home&&<>{orderButton({type:'upgrade',at:region},'Sur yükselt','⇧')}{orderButton({type:'repair',at:region},'Onar / tedavi','✚')}</>}
   {own&&game.command?.revision===2&&Object.values(territory.veterans??{}).flat().some(v=>v.marshal)&&orderButton({type:'rally',at:region},'Son Direniş','⚑')}
   {own&&count(territory.army)>0&&<><div className="map-action"><button type="button" disabled={locked||orders.length>=4} title={locked?lockReason:'Sonra çizili yoldaki komşu hedefi seç. Birlik adetlerini sağdaki panelden değiştirebilirsin.'} onClick={()=>onMode('move',region)}><span aria-hidden="true">➜</span>Buradan ilerle</button><small>Sonra komşu hedefe dokun.</small></div>{orderButton({type:'defend',at:region},'Bölgeyi savun','⛨')}

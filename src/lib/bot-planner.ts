@@ -2,6 +2,7 @@
 import {validateOrders,resolveTurn,count,power,regionsFor,edgesFor,rules,type Game,type Side,type Order,type Unit} from './game';
 import {STRATEGY_KEYS,STRATEGY_UNITS,armyHealth,recruitCapacity} from './strategy';
 import {RESOURCE_KEYS,resourceTotal} from './resources';
+import {marshalCandidates} from './commanders';
 import {nearCaravan} from './logistics';
 import {perspectiveRegion} from './map-symmetry';
 export const BOT_LEVELS={acemi:{name:'Acemi',label:'Kolay'},sancak:{name:'Sancak Beyi',label:'Orta'},serdar:{name:'Serdar',label:'Zor'}} as const;
@@ -26,13 +27,13 @@ export function botCandidates(g:Game,side:Side):Order[]{
   }
   const units:Unit[]=advanced?[...STRATEGY_KEYS]:['piyade','okcu','kusatma'];for(const unit of units){out.push({type:'recruit',at:r.id,unit});if(advanced&&recruitCapacity(g,side)>1)out.push({type:'recruit',at:r.id,unit,quantity:Math.min(2,recruitCapacity(g,side))});}
  }
- if(advanced){out.push({type:'repair',at:home},{type:'upgrade',at:home});for(const s of g.sieges??[])if(s.side===side)out.push({type:'cancel',at:s.from});}
+ if(advanced){for(const c of marshalCandidates(g,side))out.push({type:'promote',at:c.at,veteranId:c.v.id});out.push({type:'repair',at:home},{type:'upgrade',at:home});for(const s of g.sieges??[])if(s.side===side)out.push({type:'cancel',at:s.from});}
  return out.filter(o=>valid(g,side,[o])).sort((a,b)=>candidateKey(a,side,advanced).localeCompare(candidateKey(b,side,advanced)));
 }
 export function botPositionValue(g:Game,side:Side):number{
  if(g.phase==='finished')return g.winner==='draw'?0:g.winner===side?10000:-10000;
  const value=(s:Side)=>{const p=g.players[s];const army={piyade:0,okcu:0,kusatma:0,sahi:0};let n=p.hp*12+(p.wall??0)*.6+(p.gold+p.wood+(p.stone??0)+(p.grain??0))*.35;
-  for(const r of regionsFor(g)){const t=g.regions[r.id];if(t.owner!==s)continue;n+=r.kind==='castle'?30:10+(t.level??1)*2;if(g.ruleset===2){n+=armyHealth(t)*.7+STRATEGY_KEYS.reduce((a,u)=>a+(t.army[u]??0)*(STRATEGY_UNITS[u].cost.gold+STRATEGY_UNITS[u].cost.wood)*.2,0);for(const u of STRATEGY_KEYS)army[u]+=t.army[u]??0;}else n+=power(t.army)*3;}
+  for(const r of regionsFor(g)){const t=g.regions[r.id];if(t.owner!==s)continue;n+=r.kind==='castle'?30:10+(t.level??1)*2;if(g.ruleset===2){n+=armyHealth(t)*.7+STRATEGY_KEYS.reduce((a,u)=>a+(t.army[u]??0)*(STRATEGY_UNITS[u].cost.gold+STRATEGY_UNITS[u].cost.wood)*.2,0);for(const u of STRATEGY_KEYS)army[u]+=t.army[u]??0;if(Object.values(t.veterans??{}).flat().some(v=>v.marshal))n+=7;}else n+=power(t.army)*3;}
   // Bounded complement value: a one-turn evaluator otherwise never buys slow siege units.
   // Existing infantry must support these roles; surplus ranged units do not multiply the bonus.
   if(g.ruleset===2)n+=Math.min(army.okcu,Math.ceil(army.piyade/2))*6+Math.min(army.kusatma,Math.floor(army.piyade/3))*12+Math.min(army.sahi,Math.floor(army.piyade/5))*18;

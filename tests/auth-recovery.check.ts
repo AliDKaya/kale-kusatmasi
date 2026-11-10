@@ -2,7 +2,7 @@ import {chromium,type BrowserContext} from '@playwright/test';
 import assert from 'node:assert/strict';
 const base=process.env.UI_TEST_BASE_URL??'http://localhost:3004';
 async function main(){
- const browser=await chromium.launch({executablePath:'C:/Users/alik7/AppData/Local/Programs/Opera GX/opera.exe',headless:true});
+ const browser=await chromium.launch({executablePath:process.env.UI_TEST_BROWSER_EXECUTABLE,headless:true});
  for(const broken of [false,true]){
  const context=await browser.newContext({viewport:{width:1440,height:1000}});await context.routeWebSocket('**/realtime/**',ws=>ws.close());const p=await context.newPage();
  const epoch=Math.floor(Date.now()/1000);const uid='00000000-0000-4000-8000-000000000042';let signups=0,refreshes=0,reads=0,rejectedReads=0;const writes:string[]=[];let closed=false;

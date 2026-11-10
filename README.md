@@ -1,6 +1,6 @@
 # Kale Kuşatması
 
-İki insan oyuncu için Next.js App Router / TypeScript, Supabase Auth + Postgres + Realtime ve Vercel üzerinde Orta Çağ bölge stratejisi.
+İki insan oyuncu için Next.js App Router / TypeScript, Supabase Auth + Postgres + Realtime ve Netlify / Vercel üzerinde Orta Çağ bölge stratejisi.
 
 ## Yerel çalışma
 
@@ -48,3 +48,23 @@ Oda sahibi üstteki Odayı kapat düğmesiyle onay vererek odayı kapatabilir. B
 Yeni büyük odalarda mareşal: aynı piyadenin 4 hayatta kalma + 2 çatışma turuyla terfisi, yerel ordu bonusu ve ölüm sonrası iki tur terfi beklemesi. Ayrıntı: `docs/MARESAL.md`. Otomatik toparlanma etkinliği henüz yoktur.
 
 `/antrenman`: iki haritada Acemi / Sancak Beyi / Serdar. Bot kamuya açık durumdan planlar; insan taslağını görmez. Oyun sunucuda çözülür, skor yalnız ayrı `training_scores` tablosuna yazılır; istemci puanı kabul edilmez. Altı harita/zorluk kategorisinde en iyi kişi skoru listelenir. Kurulumda `003_training.sql` de uygulanmalıdır.
+
+## Ekran görüntüleri
+
+Aşağıdaki görüntüler gerçek oyun arayüzünde hazırlanmış örnek maçtandır; canlı skor veya kişisel hesap verisi içermez.
+
+![Kuşatma Vadisi haritası](docs/screenshots/harita.jpg)
+
+![Birlik kartları](docs/screenshots/birlikler.jpg)
+
+![Kuşatma Vadisi önizlemesi](docs/screenshots/vadi-onizleme.jpg)
+
+Canlı oyun: https://kale-kusatmasi.netlify.app/
+
+## Beta 0.2.0-beta.2
+
+Üst menüde Nasıl oynanır ve gerçek ekranlarla adım adım rehber; oda türüne göre üst üste kayan harita önizlemeleri; mermi hedefe ulaştıktan sonra patlama/hasar sayısı. Yeni Kuşatma Vadisi piyadesi 3 altın + 2 tahıl gerektirir, odun istemez. Uygun kıdemli piyade 6 altın + 3 tahılla oyuncu tarafından mareşal seçilir; +2 ordu hasarı ve 1 azaltma, sonraki turdan itibaren. Eski odalar kendi maliyet/terfi kurallarını korur.
+
+![Mareşal seçim penceresi](docs/screenshots/maresal-secimi.jpg)
+
+Hesap/giriş taslağı kullanıcı isteğiyle ertelendi; bu sürüme dahil değildir. Geliştirme raporu yönetici hesabına taşınırken oyun içindeki ayrıntılı rapor gizlenmiştir.

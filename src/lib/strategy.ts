@@ -1,4 +1,4 @@
-import {initialCommand,updateCommanders,type Veteran} from './commanders';
+import {initialCommand,updateCommanders,marshalCandidates,type Veteran} from './commanders';
 import {emptyArmy,finish,finishByLimit,type Army,type BattleEvent,type Game,type Order,type RegionId,type Side,type Unit,type Territory} from './game';
 import {initialLogistics,validateCaravanOrders,resolveCaravanOrders,advanceLogistics} from './logistics';
 import {RESOURCE_KEYS,zeroResources,resourceText,type Resources} from './resources';
@@ -10,7 +10,7 @@ export const STRATEGY_KEYS=['piyade','okcu','kusatma','sahi'] as const;
 const UNIT_KEYS=STRATEGY_KEYS;
 const count=(a:Army)=>UNIT_KEYS.reduce((n,u)=>n+(a[u]??0),0);
 export const STRATEGY_UNITS={
- piyade:{name:'Piyade',speed:2,hp:10,melee:3,ranged:0,range:0,cost:{gold:3,wood:1,stone:0,grain:2},role:'Ön saf · 10 can'},
+ piyade:{name:'Piyade',speed:2,hp:10,melee:3,ranged:0,range:0,cost:{gold:3,wood:0,stone:0,grain:2},role:'Ön saf · 10 can'},
  okcu:{name:'Okçu',speed:3,hp:5,melee:1,ranged:3,range:1,cost:{gold:4,wood:3,stone:0,grain:2},role:'1 bağlantıdan atış · 5 can'},
  sahi:{name:'Şahi Topu',speed:1,hp:3,melee:0,ranged:2,range:1,cost:{gold:18,wood:8,stone:12,grain:4},role:'Sur 12 · kale 8 · ordu 2 · 3 can'},
  kusatma:{name:'Mancınık',speed:1,hp:8,melee:1,ranged:2,range:2,cost:{gold:10,wood:8,stone:6,grain:3},role:'2 bağlantı menzil · kaleye 6 hasar'},
@@ -28,10 +28,12 @@ export function regionIncome(id:RegionId,level=1):Resources{
 }
 export function income(g:Game,side:Side):Resources{const result=zeroResources();for(const r of REGIONS)if(g.regions[r.id].owner===side)for(const k of RESOURCE_KEYS)result[k]+=regionIncome(r.id,g.regions[r.id].level??1)[k];return result;}
 export const recruitCapacity=(g:Game,side:Side)=>Math.min(4,1+Math.floor(REGIONS.filter(r=>g.regions[r.id].owner===side).length/2));
+export function unitCost(g:Game,unit:Unit):Resources{return unit==='piyade'&&g.economyRevision!==2?{...STRATEGY_UNITS.piyade.cost,wood:1}:STRATEGY_UNITS[unit].cost;}
 export function orderCost(g:Game,side:Side,o:Order):Resources{
  if(o.type==='cannon'){const n=g.regions[o.from].army.sahi??0;return {gold:n*2,wood:0,stone:n*2,grain:0};}
- if(o.type==='recruit'){const n=o.quantity??1;const c=STRATEGY_UNITS[o.unit].cost;return{gold:Math.max(1,c.gold-(o.at==='D'?1:0))*n,wood:c.wood*n,stone:c.stone*n,grain:c.grain*n};}
+ if(o.type==='recruit'){const n=o.quantity??1;const c=unitCost(g,o.unit);return{gold:Math.max(1,c.gold-(o.at==='D'?1:0))*n,wood:c.wood*n,stone:c.stone*n,grain:c.grain*n};}
  if(o.type==='upgrade'){const level=g.players[side].wallLevel??1;return{gold:2,wood:3*level,stone:4*level,grain:0};}
+ if(o.type==='promote')return{gold:6,wood:0,stone:0,grain:3};
  if(o.type==='rally')return{gold:2,wood:0,stone:0,grain:2};
  if(o.type==='repair')return{gold:0,wood:2,stone:3,grain:2};return zeroResources();
 }
@@ -46,7 +48,7 @@ function merge(a:Force,b:Force){for(const u of UNIT_KEYS){a.health[u].push(...b.
 function sortHealth(f:Force,u:Unit){const pairs=f.health[u].map((hp,i)=>({hp,ready:f.ready[u][i],veteran:f.veterans[u][i]})).sort((a,b)=>a.hp-b.hp);f.health[u]=pairs.map(p=>p.hp);f.ready[u]=pairs.map(p=>p.ready);f.veterans[u]=pairs.map(p=>p.veteran);}
 function take(a:Force,army:Army,relocating=false):Force{const b=force();for(const u of UNIT_KEYS){sortHealth(a,u);b.health[u]=a.health[u].splice(0,army[u]??0);b.veterans[u]=a.veterans[u].splice(0,army[u]??0);b.ready[u]=a.ready[u].splice(0,army[u]??0).map(ready=>relocating?false:ready);}sync(a);sync(b);return b;}
 const marshal=(f:Force)=>UNIT_KEYS.some(u=>f.veterans[u].some(v=>v.marshal));
-const armyBonus=(f:Force,damage:number)=>damage>0?damage+(marshal(f)?1:0):0;
+const armyBonus=(f:Force,damage:number)=>damage>0?damage+Math.max(0,...UNIT_KEYS.flatMap(u=>f.veterans[u].filter(v=>v.marshal).map(v=>v.attackBonus??1))):0;
 function hit(f:Force,damage:number){if(damage>0&&marshal(f))damage=Math.max(1,damage-1);const before=count(f.army);for(const u of UNIT_KEYS){sortHealth(f,u);while(damage>0&&f.health[u].length){const n=Math.min(damage,f.health[u][0]);f.health[u][0]-=n;damage-=n;if(!f.health[u][0]){f.health[u].shift();f.ready[u].shift();f.veterans[u].shift();}}}sync(f);return before-count(f.army);}
 export function armyHealth(t:Territory):number{const f=force(t);return UNIT_KEYS.reduce((n,u)=>n+f.health[u].reduce((a,b)=>a+b,0),0);}
 function attack(f:Force,u:Unit,base:number){return f.health[u].reduce((n,hp)=>n+Math.ceil(base*hp/STRATEGY_UNITS[u].hp),0);}
@@ -63,7 +65,7 @@ export function initialStrategyGame(now:number,waiting:boolean,withLogistics=fal
  regions.A={owner:0,army:{piyade:3,okcu:1,kusatma:0}};regions.G={owner:1,army:{piyade:3,okcu:1,kusatma:0}};
  for(const r of REGIONS)put(regions[r.id],force(regions[r.id]));
  const player=()=>({gold:10,wood:8,stone:4,grain:6,hp:20,wall:8,wallLevel:1});
- const game:Game={ruleset:2,turn:1,phase:waiting?'waiting':'playing',winner:null,players:[player(),player()],regions,deadline:new Date(now+30000).toISOString(),matchDeadline:waiting?undefined:new Date(now+720000).toISOString(),transitionReady:[false,false],sieges:[],history:[],log:['Surlar hazır. Maden taş ve altın, orman odun, merkez köy tahıl üretir.']};
+ const game:Game={ruleset:2,economyRevision:2,turn:1,phase:waiting?'waiting':'playing',winner:null,players:[player(),player()],regions,deadline:new Date(now+30000).toISOString(),matchDeadline:waiting?undefined:new Date(now+720000).toISOString(),transitionReady:[false,false],sieges:[],history:[],log:['Surlar hazır. Maden taş ve altın, orman odun, merkez köy tahıl üretir.']};
  if(withLogistics)game.logistics=initialLogistics();if(withCommand){game.command=initialCommand();for(const r of REGIONS)for(const u of UNIT_KEYS)game.regions[r.id].veterans![u].forEach((v,i)=>v.id=`${r.id}:${u}:0:${i}`);}return game;
 }
 
@@ -84,6 +86,10 @@ export function validateStrategyOrders(g:Game,side:Side,orders:Order[]):void{
    if(o.type==='upgrade'&&(g.players[side].wallLevel??1)>=3)throw new Error('Surlar en fazla 3. seviye olabilir.');
    if(o.type==='repair'&&(g.players[side].wall??0)>=(g.players[side].wallLevel??1)*8&&!g.players[side].breaches?.length&&g.players[side].hp===20&&armyHealth(t)===UNIT_KEYS.reduce((n,u)=>n+(t.army[u]??0)*STRATEGY_UNITS[u].hp,0))throw new Error('Kale, surlar ve garnizon zaten tam dayanıklı.');
    if(o.type==='repair'){if(actions.has(`heal:${at}`))throw new Error('Aynı orduda onarım ve Son Direniş birlikte kullanılamaz.');actions.add(`heal:${at}`);}
+  }else if(o.type==='promote'){
+   if(actions.has('promotion'))throw new Error('Bir turda yalnız bir mareşal seçilebilir.');
+   if(!marshalCandidates(g,side).some(c=>c.at===at&&c.v.id===o.veteranId))throw new Error('Bu piyade terfiye uygun değil veya yaşayan bir mareşalin var.');
+   reserve(at,['piyade']);actions.add('promotion');
   }else if(o.type==='rally'){
    if(g.command?.revision!==2||!g.command.rallyUsed)throw new Error('Bu eski odada Son Direniş yok; yeni Kuşatma Vadisi odası aç.');
    if(g.command.rallyUsed[side]||actions.has('rally'))throw new Error('Son Direniş maçta yalnız bir kez kullanılabilir.');
@@ -213,6 +219,11 @@ export function resolveStrategyTurn(original:Game,orders:[Order[],Order[]],now:n
  for(const {side,order:o} of recruits){if(g.regions[o.at].owner===side){const f=force(g.regions[o.at]);f.health[o.unit].push(...Array(o.quantity??1).fill(STRATEGY_UNITS[o.unit].hp));f.veterans[o.unit].push(...Array.from({length:o.quantity??1},(_,i)=>({id:`${o.at}:${o.unit}:${g.turn}:${f.veterans[o.unit].length+i}`,born:g.turn,age:0,battles:0})));put(g.regions[o.at],f);event({phase:'aftermath',kind:'recruit',at:o.at,side,unit:o.unit,amount:o.quantity??1,text:`${label(o.at)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazır`});log.push(`${sideName(side)}: ${o.quantity??1} ${STRATEGY_UNITS[o.unit].name} hazırlandı (${label(o.at)}); sonraki tur kullanılabilir.`);}else{const c=orderCost(original,side,o);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+c[k];log.push(`${sideName(side)}: ${label(o.at)} kaybedildi; üretim iptal edildi, tüm kaynaklar iade edildi.`);}}
  for(const r of REGIONS){const t=g.regions[r.id];if(t.owner===null||r.kind==='castle'){t.level=1;t.heldTurns=0;continue;}const same=t.owner===original.regions[r.id].owner;t.heldTurns=same?(original.regions[r.id].heldTurns??0)+1:0;t.level=Math.min(3,1+Math.floor(t.heldTurns/2));if(t.level>(original.regions[r.id].level??1))log.push(`${sideName(t.owner)}: ${r.name} ${t.level}. seviyeye ulaştı; ana kaynak +${t.level-1}${t.level===3?', yerel savunma +1':''}.`);}
  updateCommanders(original,g,log,event);
+ for(const side of [0,1] as Side[])for(const o of orders[side])if(o.type==='promote'){
+  const candidate=marshalCandidates(g,side).find(c=>c.at===o.at&&c.v.id===o.veteranId);
+  if(candidate){candidate.v.marshal=true;candidate.v.attackBonus=2;const text=`${sideName(side)}: ${label(o.at)} bölgesinde seçilen piyade mareşal oldu. Sonraki turdan itibaren aynı orduya toplam +2 hasar ve 1 hasar azaltma.`;log.push(text);event({phase:'aftermath',kind:'commander',side,at:o.at,text});}
+  else{const cost=orderCost(original,side,o);for(const k of RESOURCE_KEYS)g.players[side][k]=(g.players[side][k]??0)+cost[k];log.push(`${sideName(side)}: seçilen piyade kaybedildi; terfi iptal, kaynaklar iade.`);}
+ }
  resolveCaravanOrders(original,g,orders,log,event);
  const active=new Set<RegionId>();const incoming=new Set<RegionId>();
  for(const side of [0,1] as Side[])for(const o of orders[side]){if('from' in o){active.add(o.from);if('to' in o)incoming.add(o.to);}if(o.type==='repair'||o.type==='recruit'||o.type==='rally')active.add(o.at);}
