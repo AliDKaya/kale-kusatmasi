@@ -1,6 +1,6 @@
 import 'server-only';
 import postgres from 'postgres';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, isAuthRetryableFetchError } from '@supabase/supabase-js';
 import { createHash, randomInt } from 'node:crypto';
 import { Game, Order, Side, finish, initialGame, initialClassicGame, resolveTurn, score, rules, validateOrders, beginRound, finishByLimit } from './game';
 import type { Action } from './schema';
@@ -19,6 +19,7 @@ export async function identity(request: Request): Promise<string> {
   if (!token) throw new ApiError('Anonim oturum gerekli. Sayfayı yeniden aç.', 401);
   const auth = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data, error } = await auth.auth.getUser(token);
+  if(error&&(isAuthRetryableFetchError(error)||(error.status??0)>=500))throw new ApiError('Oturum servisine şu anda ulaşılamıyor. Biraz sonra yeniden dene.',503);
   if (error || !data.user) throw new ApiError('Oturum doğrulanamadı. Yeniden bağlanmayı dene.', 401);
   return data.user.id;
 }
